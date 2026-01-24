@@ -1,7 +1,9 @@
 from typing import Optional, List
 from uuid import UUID
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, delete
+from sqlalchemy.exc import SQLAlchemyError
 
 from Domain.Entities import Interview
 from Application.RepositoryInterfaces import InterviewRepository
@@ -15,42 +17,69 @@ from Infrastructure.Db.mappers import (
 
 class SqlInterviewRepository(InterviewRepository):
     
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
     
     async def create(self, interview: Interview) -> Interview:
-        model = interview_entity_to_model(interview)
-        self.db.add(model)
-        self.db.commit()
-        self.db.refresh(model)
-        return interview_model_to_entity(model)
+        try:
+            model = interview_entity_to_model(interview)
+            self.db.add(model)
+            await self.db.commit()
+            await self.db.refresh(model)
+            return interview_model_to_entity(model)
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            raise
     
     async def get_by_id(self, interview_id: UUID) -> Optional[Interview]:
-        model = self.db.query(InterviewModel).filter(InterviewModel.interview_id == str(interview_id)).first()
-        if not model:
-            return None
-        return interview_model_to_entity(model)
+        try:
+            result = await self.db.execute(
+                select(InterviewModel).filter(InterviewModel.interview_id == str(interview_id))
+            )
+            model = result.scalar_one_or_none()
+            if not model:
+                return None
+            return interview_model_to_entity(model)
+        except SQLAlchemyError as e:
+            raise
     
     async def update(self, interview: Interview) -> Interview:
-        model = self.db.query(InterviewModel).filter(InterviewModel.interview_id == str(interview.interview_id)).first()
-        if not model:
-            raise InterviewNotFoundException(interview.interview_id)
-        model.topic = interview.topic
-        model.status = interview.status.value
-        model.updated_at = interview.updated_at
-        model.completed_at = interview.completed_at
-        self.db.commit()
-        self.db.refresh(model)
-        return interview_model_to_entity(model)
+        try:
+            result = await self.db.execute(
+                select(InterviewModel).filter(InterviewModel.interview_id == str(interview.interview_id))
+            )
+            model = result.scalar_one_or_none()
+            if not model:
+                raise InterviewNotFoundException(interview.interview_id)
+            model.topic = interview.topic
+            model.status = interview.status.value
+            model.updated_at = interview.updated_at
+            model.completed_at = interview.completed_at
+            await self.db.commit()
+            await self.db.refresh(model)
+            return interview_model_to_entity(model)
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            raise
     
     async def delete(self, interview_id: UUID) -> bool:
-        model = self.db.query(InterviewModel).filter(InterviewModel.interview_id == str(interview_id)).first()
-        if not model:
-            return False
-        self.db.delete(model)
-        self.db.commit()
-        return True
+        try:
+            result = await self.db.execute(
+                delete(InterviewModel).filter(InterviewModel.interview_id == str(interview_id))
+            )
+            await self.db.commit()
+            deleted_count = result.rowcount
+            if deleted_count == 0:
+                return False
+            return True
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            raise
     
     async def get_all(self) -> List[Interview]:
-        models = self.db.query(InterviewModel).all()
-        return [interview_model_to_entity(model) for model in models]
+        try:
+            result = await self.db.execute(select(InterviewModel))
+            models = result.scalars().all()
+            return [interview_model_to_entity(model) for model in models]
+        except SQLAlchemyError as e:
+            raise

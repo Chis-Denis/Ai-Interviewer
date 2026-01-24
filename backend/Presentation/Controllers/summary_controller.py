@@ -10,7 +10,6 @@ from Composition import (
 )
 from Presentation.Mapping import interview_summary_to_response_dto
 
-
 router = APIRouter(prefix="/summaries", tags=["summaries"])
 
 

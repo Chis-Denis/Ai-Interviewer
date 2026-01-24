@@ -12,7 +12,6 @@ from Composition import (
 from Presentation.Mapping import answer_to_response_dto
 from Presentation.Validations.error_schemas import ValidationErrorResponse
 
-
 router = APIRouter(prefix="/answers", tags=["answers"])
 
 

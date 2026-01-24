@@ -21,7 +21,6 @@ class UpdateInterviewUseCase:
         if not interview:
             raise InterviewNotFoundException(interview_id)
         
-        # Business rule: Cannot update completed interview
         if interview.status == InterviewStatus.COMPLETED:
             raise InterviewAlreadyCompletedException(interview_id)
         

@@ -27,11 +27,9 @@ class GenerateQuestionUseCase:
         if not interview:
             raise InterviewNotFoundException(dto.interview_id)
         
-        # Business rule: Interview must not be completed
         if interview.status == InterviewStatus.COMPLETED:
             raise InterviewAlreadyCompletedException(dto.interview_id)
         
-        # Business rule: Interview must not be cancelled
         if interview.status == InterviewStatus.CANCELLED:
             raise InterviewNotInProgressException(
                 dto.interview_id,
@@ -40,7 +38,6 @@ class GenerateQuestionUseCase:
         
         existing_questions = await self.question_repository.get_by_interview_id(dto.interview_id)
         
-        # Business rule: Check max questions reached
         max_questions = settings.MAX_QUESTIONS_PER_INTERVIEW
         if len(existing_questions) >= max_questions:
             raise MaxQuestionsReachedException(dto.interview_id, max_questions)
