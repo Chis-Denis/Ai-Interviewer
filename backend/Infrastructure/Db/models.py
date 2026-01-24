@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 import uuid
 from Infrastructure.Db.database import Base
-from Domain.Enums.InterviewStatus import InterviewStatus
+from Domain.Enums import InterviewStatus
 
 
 def generate_uuid():

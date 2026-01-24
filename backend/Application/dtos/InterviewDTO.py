@@ -1,8 +1,11 @@
-from pydantic import BaseModel, field_serializer, field_validator
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
-from datetime import datetime, timezone
+
+from pydantic import BaseModel, field_serializer, field_validator
+
 from Domain.Enums import InterviewStatus
+from Presentation.Validations.validators import validate_string_length
 
 
 class CreateInterviewDTO(BaseModel):
@@ -11,13 +14,7 @@ class CreateInterviewDTO(BaseModel):
     @field_validator('topic')
     @classmethod
     def validate_topic(cls, v: str) -> str:
-        if not v or not v.strip():
-            raise ValueError("Topic is required and cannot be empty")
-        if len(v.strip()) < 3:
-            raise ValueError("Topic must be at least 3 characters long")
-        if len(v) > 200:
-            raise ValueError("Topic must be at most 200 characters long")
-        return v.strip()
+        return validate_string_length(v, min_length=3, max_length=200)
 
 
 class InterviewResponseDTO(BaseModel):
@@ -50,10 +47,4 @@ class UpdateInterviewDTO(BaseModel):
     def validate_topic(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        if not v.strip():
-            raise ValueError("Topic cannot be empty")
-        if len(v.strip()) < 3:
-            raise ValueError("Topic must be at least 3 characters long")
-        if len(v) > 200:
-            raise ValueError("Topic must be at most 200 characters long")
-        return v.strip()
+        return validate_string_length(v, min_length=3, max_length=200)

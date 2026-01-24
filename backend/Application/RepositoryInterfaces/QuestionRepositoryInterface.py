@@ -17,7 +17,3 @@ class QuestionRepository(ABC):
     @abstractmethod
     async def get_by_interview_id(self, interview_id: UUID) -> List[Question]:
         pass
-    
-    @abstractmethod
-    async def update(self, question: Question) -> Question:
-        pass

@@ -15,5 +15,5 @@ class InterviewSummaryRepository(ABC):
         pass
     
     @abstractmethod
-    async def update(self, summary: InterviewSummary) -> InterviewSummary:
+    async def update(self, summary: InterviewSummary) -> Optional[InterviewSummary]:
         pass

@@ -46,6 +46,9 @@ class Settings(BaseSettings):
     
     # API Configuration
     API_V1_PREFIX: str = "/api/v1"
+    
+    # Interview Configuration
+    MAX_QUESTIONS_PER_INTERVIEW: int = 10
 
 
 settings = Settings()

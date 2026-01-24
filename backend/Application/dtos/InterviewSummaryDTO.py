@@ -1,7 +1,8 @@
-from pydantic import BaseModel, field_serializer
-from typing import Optional, List
+from datetime import datetime, timezone
+from typing import List, Optional
 from uuid import UUID
-from datetime import datetime
+
+from pydantic import BaseModel, field_serializer
 
 
 class InterviewSummaryResponseDTO(BaseModel):
@@ -16,7 +17,10 @@ class InterviewSummaryResponseDTO(BaseModel):
 
     @field_serializer('created_at')
     def serialize_datetime(self, value: datetime) -> str:
-        return value.astimezone().strftime("%Y-%m-%d %H:%M:%S")
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        local_time = value.astimezone()
+        return local_time.strftime("%Y-%m-%d %H:%M:%S")
 
     class Config:
         from_attributes = True

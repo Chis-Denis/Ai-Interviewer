@@ -1,5 +1,5 @@
 from fastapi import Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from Infrastructure.Db.database import get_db
 from Application.RepositoryInterfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
 from Infrastructure.Repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
@@ -17,19 +17,19 @@ from Application.UseCases import (
 )
 
 
-def get_interview_repository(db: Session = Depends(get_db)) -> InterviewRepository:
+async def get_interview_repository(db: AsyncSession = Depends(get_db)) -> InterviewRepository:
     return SqlInterviewRepository(db)
 
 
-def get_question_repository(db: Session = Depends(get_db)) -> QuestionRepository:
+async def get_question_repository(db: AsyncSession = Depends(get_db)) -> QuestionRepository:
     return SqlQuestionRepository(db)
 
 
-def get_answer_repository(db: Session = Depends(get_db)) -> AnswerRepository:
+async def get_answer_repository(db: AsyncSession = Depends(get_db)) -> AnswerRepository:
     return SqlAnswerRepository(db)
 
 
-def get_summary_repository(db: Session = Depends(get_db)) -> InterviewSummaryRepository:
+async def get_summary_repository(db: AsyncSession = Depends(get_db)) -> InterviewSummaryRepository:
     return SqlInterviewSummaryRepository(db)
 
 
@@ -71,9 +71,11 @@ def get_question_use_case(
 
 
 def get_submit_answer_use_case(
-    repository: AnswerRepository = Depends(get_answer_repository)
+    answer_repository: AnswerRepository = Depends(get_answer_repository),
+    interview_repository: InterviewRepository = Depends(get_interview_repository),
+    question_repository: QuestionRepository = Depends(get_question_repository),
 ) -> SubmitAnswerUseCase:
-    return SubmitAnswerUseCase(repository)
+    return SubmitAnswerUseCase(answer_repository, interview_repository, question_repository)
 
 
 def get_answer_use_case(

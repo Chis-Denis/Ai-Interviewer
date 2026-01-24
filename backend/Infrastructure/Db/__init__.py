@@ -1,4 +1,4 @@
-from Infrastructure.Db.database import Base, engine, SessionLocal, get_db, init_db
+from Infrastructure.Db.database import Base, engine, AsyncSessionLocal, get_db, init_db
 from Infrastructure.Db.models import (
     InterviewModel,
     QuestionModel,
@@ -19,7 +19,7 @@ from Infrastructure.Db.mappers import (
 __all__ = [
     "Base",
     "engine",
-    "SessionLocal",
+    "AsyncSessionLocal",
     "get_db",
     "init_db",
     "InterviewModel",

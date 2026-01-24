@@ -1,30 +1,46 @@
-import os
 from pathlib import Path
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.orm import declarative_base
 from Core.config import settings
 
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args={"check_same_thread": False},
+def get_async_database_url() -> str:
+    """Converts SQLite URL to async-compatible format."""
+    if settings.DATABASE_URL.startswith("sqlite:///"):
+        return settings.DATABASE_URL.replace("sqlite:///", "sqlite+aiosqlite:///")
+    return settings.DATABASE_URL
+
+engine = create_async_engine(
+    get_async_database_url(),
     echo=settings.DATABASE_ECHO,
+    future=True,
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
+)
+
 Base = declarative_base()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_db():
+    """Async database session dependency."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
-def init_db():
+async def init_db():
+    """Initialize database tables."""
     db_path = Path(settings.DATABASE_URL.replace("sqlite:///", ""))
     db_dir = db_path.parent
     if db_dir and not db_dir.exists():
         db_dir.mkdir(parents=True, exist_ok=True)
-    Base.metadata.create_all(bind=engine)
+    
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

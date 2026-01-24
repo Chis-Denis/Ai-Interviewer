@@ -7,7 +7,7 @@ from Infrastructure.Db.models import (
     AnswerModel,
     InterviewSummaryModel,
 )
-from Domain.Enums.InterviewStatus import InterviewStatus
+from Domain.Enums import InterviewStatus
 
 
 def interview_model_to_entity(model: InterviewModel) -> Interview:

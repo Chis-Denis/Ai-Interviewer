@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from uuid import UUID
 from typing import List
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, status
+
 from Application.UseCases import GenerateQuestionUseCase, GetQuestionUseCase
 from Application.dtos import GenerateQuestionDTO, QuestionResponseDTO
-from Presentation.Mapping import question_to_response_dto
-from Presentation.Validations.error_schemas import ValidationErrorResponse
 from Composition import (
     get_generate_question_use_case,
     get_question_use_case,
 )
-
+from Presentation.Mapping import question_to_response_dto
+from Presentation.Validations.error_schemas import ValidationErrorResponse
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
@@ -20,6 +21,7 @@ router = APIRouter(prefix="/questions", tags=["questions"])
     status_code=status.HTTP_201_CREATED,
     responses={
         404: {"description": "Interview not found"},
+        400: {"description": "Business rule violation (interview completed, cancelled, or max questions reached)"},
         422: {"model": ValidationErrorResponse, "description": "Validation Error"},
     }
 )
@@ -50,7 +52,11 @@ async def get_question(
 @router.get(
     "/interview/{interview_id}",
     response_model=List[QuestionResponseDTO],
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    responses={
+        200: {"description": "List of questions for the interview"},
+        404: {"description": "Interview not found"},
+    }
 )
 async def get_questions_by_interview(
     interview_id: UUID,
