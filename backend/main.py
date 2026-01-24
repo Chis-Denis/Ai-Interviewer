@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from Core.config import settings
 from Infrastructure.Db import init_db
+from Presentation.middleware import setup_middleware
 
 app = FastAPI(
     title="AI Interviewer API",
@@ -11,13 +10,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+setup_middleware(app)
 
 
 @app.on_event("startup")
@@ -26,12 +19,9 @@ async def startup_event():
     print("Database initialized successfully")
 
 
-# Router registration
-from Presentation.Controllers.health_controller import router as health_router
-from Presentation.Controllers.interview_controller import router as interview_router
+from Presentation.Routers import register_routers
 
-app.include_router(health_router)
-app.include_router(interview_router, prefix="/api/v1")
+register_routers(app)
 
 
 if __name__ == "__main__":

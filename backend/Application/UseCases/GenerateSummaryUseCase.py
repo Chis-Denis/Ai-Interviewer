@@ -20,4 +20,32 @@ class GenerateSummaryUseCase:
         self.summary_repository = summary_repository
     
     async def execute(self, interview_id: UUID) -> InterviewSummary:
-        pass
+        interview = await self.interview_repository.get_by_id(interview_id)
+        if not interview:
+            raise ValueError("Interview not found")
+        
+        answers = await self.answer_repository.get_by_interview_id(interview_id)
+        if not answers:
+            raise ValueError("No answers found for this interview")
+        
+        answer_texts = [answer.text for answer in answers]
+        combined_text = " ".join(answer_texts)
+        
+        themes = [f"Theme {i+1}" for i in range(min(3, len(answers)))]
+        key_points = [f"Key point from answer {i+1}" for i in range(min(5, len(answers)))]
+        
+        summary = InterviewSummary(
+            interview_id=interview_id,
+            themes=themes,
+            key_points=key_points,
+            sentiment_score=0.5,
+            sentiment_label="neutral",
+            full_summary_text=f"Summary of interview about {interview.topic}. Total answers: {len(answers)}",
+        )
+        
+        existing_summary = await self.summary_repository.get_by_interview_id(interview_id)
+        if existing_summary:
+            summary.summary_id = existing_summary.summary_id
+            return await self.summary_repository.update(summary)
+        
+        return await self.summary_repository.create(summary)

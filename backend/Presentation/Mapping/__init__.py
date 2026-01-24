@@ -1,13 +1,13 @@
-from Domain.Entities import Interview
-from Application.dtos import InterviewResponseDTO
+from Presentation.Mapping.mappers import (
+    interview_to_response_dto,
+    question_to_response_dto,
+    answer_to_response_dto,
+    interview_summary_to_response_dto,
+)
 
-
-def interview_to_response_dto(interview: Interview) -> InterviewResponseDTO:
-    return InterviewResponseDTO(
-        interview_id=interview.interview_id,
-        topic=interview.topic,
-        status=interview.status.value,
-        created_at=interview.created_at,
-        updated_at=interview.updated_at,
-        completed_at=interview.completed_at,
-    )
+__all__ = [
+    "interview_to_response_dto",
+    "question_to_response_dto",
+    "answer_to_response_dto",
+    "interview_summary_to_response_dto",
+]

@@ -9,4 +9,9 @@ class SubmitAnswerUseCase:
         self.answer_repository = answer_repository
     
     async def execute(self, dto: CreateAnswerDTO) -> Answer:
-        pass
+        answer = Answer(
+            text=dto.text,
+            question_id=dto.question_id,
+            interview_id=dto.interview_id,
+        )
+        return await self.answer_repository.create(answer)
