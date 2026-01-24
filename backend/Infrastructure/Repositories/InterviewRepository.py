@@ -1,8 +1,11 @@
 from typing import Optional, List
 from uuid import UUID
+
 from sqlalchemy.orm import Session
+
 from Domain.Entities import Interview
 from Application.RepositoryInterfaces import InterviewRepository
+from Application.Exceptions import InterviewNotFoundException
 from Infrastructure.Db.models import InterviewModel
 from Infrastructure.Db.mappers import (
     interview_model_to_entity,
@@ -31,7 +34,7 @@ class SqlInterviewRepository(InterviewRepository):
     async def update(self, interview: Interview) -> Interview:
         model = self.db.query(InterviewModel).filter(InterviewModel.interview_id == str(interview.interview_id)).first()
         if not model:
-            raise ValueError("Interview not found")
+            raise InterviewNotFoundException(interview.interview_id)
         model.topic = interview.topic
         model.status = interview.status.value
         model.updated_at = interview.updated_at

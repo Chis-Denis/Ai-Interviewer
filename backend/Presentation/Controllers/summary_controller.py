@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
 from uuid import UUID
+
+from fastapi import APIRouter, Depends, status
+
 from Application.UseCases import GenerateSummaryUseCase, GetSummaryUseCase
 from Application.dtos import InterviewSummaryResponseDTO
-from Presentation.Mapping import interview_summary_to_response_dto
 from Composition import (
     get_generate_summary_use_case,
     get_summary_use_case,
 )
+from Presentation.Mapping import interview_summary_to_response_dto
 
 
 router = APIRouter(prefix="/summaries", tags=["summaries"])
@@ -17,7 +19,8 @@ router = APIRouter(prefix="/summaries", tags=["summaries"])
     response_model=InterviewSummaryResponseDTO,
     status_code=status.HTTP_201_CREATED,
     responses={
-        404: {"description": "Interview not found or no answers available"},
+        404: {"description": "Interview not found"},
+        400: {"description": "Business rule violation (no answers available)"},
     }
 )
 async def generate_summary(

@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from uuid import UUID
 from typing import List
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, status
+
 from Application.UseCases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
@@ -12,14 +14,14 @@ from Application.dtos import (
     InterviewResponseDTO,
     UpdateInterviewDTO,
 )
-from Presentation.Mapping import interview_to_response_dto
-from Presentation.Validations.error_schemas import ValidationErrorResponse
 from Composition import (
     get_create_interview_use_case,
     get_interview_use_case,
     get_delete_interview_use_case,
     get_update_interview_use_case,
 )
+from Presentation.Mapping import interview_to_response_dto
+from Presentation.Validations.error_schemas import ValidationErrorResponse
 
 
 router = APIRouter(prefix="/interviews", tags=["interviews"])
@@ -60,7 +62,10 @@ async def get_interview(
 @router.get(
     "/",
     response_model=List[InterviewResponseDTO],
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    responses={
+        200: {"description": "List of interviews"},
+    }
 )
 async def get_all_interviews(
     use_case: GetInterviewUseCase = Depends(get_interview_use_case),
@@ -75,6 +80,7 @@ async def get_all_interviews(
     status_code=status.HTTP_200_OK,
     responses={
         404: {"description": "Interview not found"},
+        400: {"description": "Business rule violation (interview already completed)"},
         422: {"model": ValidationErrorResponse, "description": "Validation Error"},
     }
 )

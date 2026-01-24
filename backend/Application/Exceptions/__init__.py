@@ -9,6 +9,10 @@ from Application.Exceptions.domain_exceptions import (
     AnswerNotFoundException,
     SummaryNotFoundException,
     NoAnswersFoundException,
+    InterviewAlreadyCompletedException,
+    MaxQuestionsReachedException,
+    InvalidAnswerOrderException,
+    InterviewNotInProgressException,
 )
 
 __all__ = [
@@ -20,4 +24,8 @@ __all__ = [
     "AnswerNotFoundException",
     "SummaryNotFoundException",
     "NoAnswersFoundException",
+    "InterviewAlreadyCompletedException",
+    "MaxQuestionsReachedException",
+    "InvalidAnswerOrderException",
+    "InterviewNotInProgressException",
 ]

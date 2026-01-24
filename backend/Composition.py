@@ -71,9 +71,11 @@ def get_question_use_case(
 
 
 def get_submit_answer_use_case(
-    repository: AnswerRepository = Depends(get_answer_repository)
+    answer_repository: AnswerRepository = Depends(get_answer_repository),
+    interview_repository: InterviewRepository = Depends(get_interview_repository),
+    question_repository: QuestionRepository = Depends(get_question_repository),
 ) -> SubmitAnswerUseCase:
-    return SubmitAnswerUseCase(repository)
+    return SubmitAnswerUseCase(answer_repository, interview_repository, question_repository)
 
 
 def get_answer_use_case(

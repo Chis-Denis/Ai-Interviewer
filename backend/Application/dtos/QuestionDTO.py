@@ -1,6 +1,10 @@
-from pydantic import BaseModel, field_serializer, field_validator
+from datetime import datetime, timezone
+from typing import List
 from uuid import UUID
-from datetime import datetime
+
+from pydantic import BaseModel, field_serializer, field_validator
+
+from Presentation.Validations.validators import validate_string_length, validate_uuid
 
 
 class QuestionResponseDTO(BaseModel):
@@ -12,7 +16,10 @@ class QuestionResponseDTO(BaseModel):
 
     @field_serializer('created_at')
     def serialize_datetime(self, value: datetime) -> str:
-        return value.astimezone().strftime("%Y-%m-%d %H:%M:%S")
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        local_time = value.astimezone()
+        return local_time.strftime("%Y-%m-%d %H:%M:%S")
 
     class Config:
         from_attributes = True
@@ -21,27 +28,25 @@ class QuestionResponseDTO(BaseModel):
 class GenerateQuestionDTO(BaseModel):
     interview_id: UUID
     topic: str
-    previous_answers: list[str] = []
+    previous_answers: List[str] = []
+    
+    @field_validator('interview_id')
+    @classmethod
+    def validate_interview_id(cls, v) -> UUID:
+        return validate_uuid(v)
     
     @field_validator('topic')
     @classmethod
     def validate_topic(cls, v: str) -> str:
-        if not v or not v.strip():
-            raise ValueError("Topic is required and cannot be empty")
-        if len(v.strip()) < 3:
-            raise ValueError("Topic must be at least 3 characters long")
-        if len(v) > 200:
-            raise ValueError("Topic must be at most 200 characters long")
-        return v.strip()
+        return validate_string_length(v, min_length=3, max_length=200)
     
     @field_validator('previous_answers')
     @classmethod
-    def validate_previous_answers(cls, v: list[str]) -> list[str]:
+    def validate_previous_answers(cls, v: List[str]) -> List[str]:
         if not isinstance(v, list):
             raise ValueError("Previous answers must be a list")
         for answer in v:
             if not isinstance(answer, str):
                 raise ValueError("All previous answers must be strings")
-            if len(answer) > 5000:
-                raise ValueError("Each answer must be at most 5000 characters long")
+            validate_string_length(answer, min_length=0, max_length=5000)
         return v

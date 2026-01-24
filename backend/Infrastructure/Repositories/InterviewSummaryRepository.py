@@ -1,8 +1,11 @@
 from typing import Optional
 from uuid import UUID
+
 from sqlalchemy.orm import Session
+
 from Domain.Entities import InterviewSummary
 from Application.RepositoryInterfaces import InterviewSummaryRepository
+from Application.Exceptions import SummaryNotFoundException
 from Infrastructure.Db.models import InterviewSummaryModel
 from Infrastructure.Db.mappers import (
     interview_summary_model_to_entity,
@@ -31,7 +34,7 @@ class SqlInterviewSummaryRepository(InterviewSummaryRepository):
     async def update(self, summary: InterviewSummary) -> InterviewSummary:
         model = self.db.query(InterviewSummaryModel).filter(InterviewSummaryModel.summary_id == str(summary.summary_id)).first()
         if not model:
-            raise ValueError("Interview summary not found")
+            raise SummaryNotFoundException(summary.interview_id)
         model.themes = summary.themes
         model.key_points = summary.key_points
         model.sentiment_score = summary.sentiment_score

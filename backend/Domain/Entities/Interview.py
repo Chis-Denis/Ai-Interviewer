@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional, List
 from uuid import UUID, uuid4
-from Domain.Enums.InterviewStatus import InterviewStatus
+from Domain.Enums import InterviewStatus
 
 
 class Interview:

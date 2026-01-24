@@ -1,10 +1,12 @@
+from uuid import UUID
+
 from Domain.Entities import InterviewSummary
+
 from Application.RepositoryInterfaces import (
     InterviewRepository,
     AnswerRepository,
     InterviewSummaryRepository,
 )
-from uuid import UUID
 from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException
 
 
@@ -23,11 +25,11 @@ class GenerateSummaryUseCase:
     async def execute(self, interview_id: UUID) -> InterviewSummary:
         interview = await self.interview_repository.get_by_id(interview_id)
         if not interview:
-            raise InterviewNotFoundException(str(interview_id))
+            raise InterviewNotFoundException(interview_id)
         
         answers = await self.answer_repository.get_by_interview_id(interview_id)
         if not answers:
-            raise NoAnswersFoundException(str(interview_id))
+            raise NoAnswersFoundException(interview_id)
         
         answer_texts = [answer.text for answer in answers]
         combined_text = " ".join(answer_texts)

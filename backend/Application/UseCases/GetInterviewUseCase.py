@@ -1,6 +1,8 @@
 from typing import List
 from uuid import UUID
+
 from Domain.Entities import Interview
+
 from Application.RepositoryInterfaces import InterviewRepository
 from Application.Exceptions import InterviewNotFoundException
 
@@ -13,7 +15,7 @@ class GetInterviewUseCase:
     async def execute(self, interview_id: UUID) -> Interview:
         interview = await self.interview_repository.get_by_id(interview_id)
         if not interview:
-            raise InterviewNotFoundException(str(interview_id))
+            raise InterviewNotFoundException(interview_id)
         return interview
     
     async def execute_all(self) -> List[Interview]:

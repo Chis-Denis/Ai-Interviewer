@@ -1,9 +1,14 @@
 from uuid import UUID
+
 from Domain.Entities import Interview
+from Domain.Enums import InterviewStatus
+
 from Application.RepositoryInterfaces import InterviewRepository
 from Application.dtos import UpdateInterviewDTO
-from Application.Exceptions import InterviewNotFoundException
-from Domain.Enums import InterviewStatus
+from Application.Exceptions import (
+    InterviewNotFoundException,
+    InterviewAlreadyCompletedException,
+)
 
 
 class UpdateInterviewUseCase:
@@ -14,7 +19,11 @@ class UpdateInterviewUseCase:
     async def execute(self, interview_id: UUID, dto: UpdateInterviewDTO) -> Interview:
         interview = await self.interview_repository.get_by_id(interview_id)
         if not interview:
-            raise InterviewNotFoundException(str(interview_id))
+            raise InterviewNotFoundException(interview_id)
+        
+        # Business rule: Cannot update completed interview
+        if interview.status == InterviewStatus.COMPLETED:
+            raise InterviewAlreadyCompletedException(interview_id)
         
         if dto.topic is not None:
             interview.topic = dto.topic
