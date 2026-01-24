@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from uuid import UUID
 from Application.UseCases import GenerateSummaryUseCase, GetSummaryUseCase
 from Application.dtos import InterviewSummaryResponseDTO
@@ -12,24 +12,33 @@ from Composition import (
 router = APIRouter(prefix="/summaries", tags=["summaries"])
 
 
-@router.post("/interview/{interview_id}", response_model=InterviewSummaryResponseDTO)
+@router.post(
+    "/interview/{interview_id}",
+    response_model=InterviewSummaryResponseDTO,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        404: {"description": "Interview not found or no answers available"},
+    }
+)
 async def generate_summary(
     interview_id: UUID,
     use_case: GenerateSummaryUseCase = Depends(get_generate_summary_use_case),
 ):
-    try:
-        summary = await use_case.execute(interview_id)
-        return interview_summary_to_response_dto(summary)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    summary = await use_case.execute(interview_id)
+    return interview_summary_to_response_dto(summary)
 
 
-@router.get("/interview/{interview_id}", response_model=InterviewSummaryResponseDTO)
+@router.get(
+    "/interview/{interview_id}",
+    response_model=InterviewSummaryResponseDTO,
+    status_code=status.HTTP_200_OK,
+    responses={
+        404: {"description": "Summary not found for this interview"},
+    }
+)
 async def get_summary(
     interview_id: UUID,
     use_case: GetSummaryUseCase = Depends(get_summary_use_case),
 ):
     summary = await use_case.execute(interview_id)
-    if not summary:
-        raise HTTPException(status_code=404, detail="Summary not found for this interview")
     return interview_summary_to_response_dto(summary)

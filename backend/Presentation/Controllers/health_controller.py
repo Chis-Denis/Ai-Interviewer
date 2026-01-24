@@ -1,9 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 router = APIRouter(tags=["system"])
 
 
-@router.get("/")
+@router.get(
+    "/",
+    status_code=status.HTTP_200_OK
+)
 async def root():
     return {
         "message": "AI Interviewer API",
@@ -12,6 +15,9 @@ async def root():
     }
 
 
-@router.get("/health")
+@router.get(
+    "/health",
+    status_code=status.HTTP_200_OK
+)
 async def health_check():
     return {"status": "healthy"}

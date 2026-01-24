@@ -1,6 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from Infrastructure.Db import init_db
 from Presentation.middleware import setup_middleware
+from Presentation.error_handler import (
+    validation_exception_handler,
+    not_found_exception_handler,
+    business_rule_exception_handler,
+)
+from Application.Exceptions import NotFoundException, BusinessRuleException
 
 app = FastAPI(
     title="AI Interviewer API",
@@ -11,6 +18,9 @@ app = FastAPI(
 )
 
 setup_middleware(app)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(NotFoundException, not_found_exception_handler)
+app.add_exception_handler(BusinessRuleException, business_rule_exception_handler)
 
 
 @app.on_event("startup")

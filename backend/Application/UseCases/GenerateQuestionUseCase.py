@@ -1,6 +1,7 @@
 from Domain.Entities import Question
 from Application.RepositoryInterfaces import QuestionRepository, InterviewRepository
 from Application.dtos import GenerateQuestionDTO
+from Application.Exceptions import InterviewNotFoundException
 
 
 class GenerateQuestionUseCase:
@@ -16,7 +17,7 @@ class GenerateQuestionUseCase:
     async def execute(self, dto: GenerateQuestionDTO) -> Question:
         interview = await self.interview_repository.get_by_id(dto.interview_id)
         if not interview:
-            raise ValueError("Interview not found")
+            raise InterviewNotFoundException(str(dto.interview_id))
         
         existing_questions = await self.question_repository.get_by_interview_id(dto.interview_id)
         next_order = len(existing_questions) + 1
