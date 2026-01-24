@@ -161,14 +161,3 @@ Key dependencies:
 - `python-dotenv`: Environment variable management
 
 See `requirements.txt` for the complete list.
-
-## Contributing
-
-1. Create a feature branch
-2. Make your changes
-3. Write tests
-4. Submit a pull request
-
-## License
-
-[Your License Here]
