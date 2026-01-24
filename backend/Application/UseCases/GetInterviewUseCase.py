@@ -10,7 +10,7 @@ class GetInterviewUseCase:
         self.interview_repository = interview_repository
     
     async def execute(self, interview_id: UUID) -> Optional[Interview]:
-        pass
+        return await self.interview_repository.get_by_id(interview_id)
     
     async def execute_all(self) -> List[Interview]:
-        pass
+        return await self.interview_repository.get_all()

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, Float, DateTime, ForeignKey, Text, JSON
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from Infrastructure.Db.database import Base
 from Domain.Enums.InterviewStatus import InterviewStatus
@@ -10,6 +10,10 @@ def generate_uuid():
     return str(uuid.uuid4())
 
 
+def get_utc_now():
+    return datetime.now(timezone.utc)
+
+
 class InterviewModel(Base):
     
     __tablename__ = "interviews"
@@ -17,8 +21,8 @@ class InterviewModel(Base):
     interview_id = Column(String, primary_key=True, default=generate_uuid)
     topic = Column(String, nullable=False)
     status = Column(String, nullable=False, default=InterviewStatus.NOT_STARTED.value)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=get_utc_now, nullable=False)
+    updated_at = Column(DateTime, default=get_utc_now, onupdate=get_utc_now, nullable=False)
     completed_at = Column(DateTime, nullable=True)
     
     questions = relationship("QuestionModel", back_populates="interview", cascade="all, delete-orphan")
@@ -34,7 +38,7 @@ class QuestionModel(Base):
     text = Column(Text, nullable=False)
     interview_id = Column(String, ForeignKey("interviews.interview_id"), nullable=False)
     question_order = Column(Integer, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=get_utc_now, nullable=False)
     
     interview = relationship("InterviewModel", back_populates="questions")
     answers = relationship("AnswerModel", back_populates="question", cascade="all, delete-orphan")
@@ -48,7 +52,7 @@ class AnswerModel(Base):
     text = Column(Text, nullable=False)
     question_id = Column(String, ForeignKey("questions.question_id"), nullable=False)
     interview_id = Column(String, ForeignKey("interviews.interview_id"), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=get_utc_now, nullable=False)
     
     question = relationship("QuestionModel", back_populates="answers")
     interview = relationship("InterviewModel", back_populates="answers")
@@ -65,6 +69,6 @@ class InterviewSummaryModel(Base):
     sentiment_score = Column(Float, nullable=True)
     sentiment_label = Column(String, nullable=True)
     full_summary_text = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=get_utc_now, nullable=False)
     
     interview = relationship("InterviewModel", back_populates="summary")

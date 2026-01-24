@@ -26,23 +26,12 @@ async def startup_event():
     print("Database initialized successfully")
 
 
-@app.get("/")
-async def root():
-    return {
-        "message": "AI Interviewer API",
-        "version": "1.0.0",
-        "docs": "/docs"
-    }
-
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
-
-
 # Router registration
-# from Presentation.Controllers.interview_controller import router as interview_router
-# app.include_router(interview_router, prefix="/api/v1")
+from Presentation.Controllers.health_controller import router as health_router
+from Presentation.Controllers.interview_controller import router as interview_router
+
+app.include_router(health_router)
+app.include_router(interview_router, prefix="/api/v1")
 
 
 if __name__ == "__main__":
