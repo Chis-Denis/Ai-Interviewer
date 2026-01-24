@@ -7,7 +7,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from Domain.Entities import InterviewSummary
 from Application.RepositoryInterfaces import InterviewSummaryRepository
-from Application.Exceptions import SummaryNotFoundException
 from Infrastructure.Db.models import InterviewSummaryModel
 from Infrastructure.Db.mappers import (
     interview_summary_model_to_entity,
@@ -27,7 +26,7 @@ class SqlInterviewSummaryRepository(InterviewSummaryRepository):
             await self.db.commit()
             await self.db.refresh(model)
             return interview_summary_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             await self.db.rollback()
             raise
     
@@ -40,17 +39,17 @@ class SqlInterviewSummaryRepository(InterviewSummaryRepository):
             if not model:
                 return None
             return interview_summary_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             raise
     
-    async def update(self, summary: InterviewSummary) -> InterviewSummary:
+    async def update(self, summary: InterviewSummary) -> Optional[InterviewSummary]:
         try:
             result = await self.db.execute(
                 select(InterviewSummaryModel).filter(InterviewSummaryModel.summary_id == str(summary.summary_id))
             )
             model = result.scalar_one_or_none()
             if not model:
-                raise SummaryNotFoundException(summary.interview_id)
+                return None
             model.themes = summary.themes
             model.key_points = summary.key_points
             model.sentiment_score = summary.sentiment_score
@@ -59,6 +58,6 @@ class SqlInterviewSummaryRepository(InterviewSummaryRepository):
             await self.db.commit()
             await self.db.refresh(model)
             return interview_summary_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             await self.db.rollback()
             raise

@@ -6,8 +6,10 @@ from Presentation.error_handler import (
     validation_exception_handler,
     not_found_exception_handler,
     business_rule_exception_handler,
+    database_exception_handler,
 )
 from Application.Exceptions import NotFoundException, BusinessRuleException
+from sqlalchemy.exc import SQLAlchemyError
 
 
 @asynccontextmanager
@@ -30,6 +32,7 @@ setup_middleware(app)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(NotFoundException, not_found_exception_handler)
 app.add_exception_handler(BusinessRuleException, business_rule_exception_handler)
+app.add_exception_handler(SQLAlchemyError, database_exception_handler)
 
 
 from Presentation.Routers import register_routers

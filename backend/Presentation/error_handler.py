@@ -2,6 +2,7 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from typing import List, Dict, Any
+from sqlalchemy.exc import SQLAlchemyError
 from Application.Exceptions import (
     NotFoundException,
     BusinessRuleException,
@@ -49,4 +50,15 @@ async def business_rule_exception_handler(request: Request, exc: BusinessRuleExc
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"error": "Business Rule Violation", "message": exc.message}
+    )
+
+
+async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
+    """Handles database-related exceptions from SQLAlchemy."""
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "error": "Database Error",
+            "message": "An error occurred while processing your request. Please try again later."
+        }
     )

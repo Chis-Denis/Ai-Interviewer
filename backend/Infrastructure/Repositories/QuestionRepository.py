@@ -26,7 +26,7 @@ class SqlQuestionRepository(QuestionRepository):
             await self.db.commit()
             await self.db.refresh(model)
             return question_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             await self.db.rollback()
             raise
     
@@ -39,7 +39,7 @@ class SqlQuestionRepository(QuestionRepository):
             if not model:
                 return None
             return question_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             raise
     
     async def get_by_interview_id(self, interview_id: UUID) -> List[Question]:
@@ -51,5 +51,5 @@ class SqlQuestionRepository(QuestionRepository):
             )
             models = result.scalars().all()
             return [question_model_to_entity(model) for model in models]
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             raise

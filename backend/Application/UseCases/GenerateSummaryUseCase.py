@@ -7,7 +7,7 @@ from Application.RepositoryInterfaces import (
     AnswerRepository,
     InterviewSummaryRepository,
 )
-from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException
+from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException
 
 
 class GenerateSummaryUseCase:
@@ -49,6 +49,9 @@ class GenerateSummaryUseCase:
         existing_summary = await self.summary_repository.get_by_interview_id(interview_id)
         if existing_summary:
             summary.summary_id = existing_summary.summary_id
-            return await self.summary_repository.update(summary)
+            updated_summary = await self.summary_repository.update(summary)
+            if not updated_summary:
+                raise SummaryNotFoundException(interview_id)
+            return updated_summary
         
         return await self.summary_repository.create(summary)

@@ -15,7 +15,7 @@ class InterviewRepository(ABC):
         pass
     
     @abstractmethod
-    async def update(self, interview: Interview) -> Interview:
+    async def update(self, interview: Interview) -> Optional[Interview]:
         pass
     
     @abstractmethod

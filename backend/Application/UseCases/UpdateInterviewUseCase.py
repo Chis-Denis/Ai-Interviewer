@@ -35,4 +35,7 @@ class UpdateInterviewUseCase:
             elif dto.status == InterviewStatus.CANCELLED:
                 interview.cancel()
         
-        return await self.interview_repository.update(interview)
+        updated_interview = await self.interview_repository.update(interview)
+        if not updated_interview:
+            raise InterviewNotFoundException(interview_id)
+        return updated_interview

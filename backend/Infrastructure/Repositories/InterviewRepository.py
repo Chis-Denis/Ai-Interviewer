@@ -7,7 +7,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from Domain.Entities import Interview
 from Application.RepositoryInterfaces import InterviewRepository
-from Application.Exceptions import InterviewNotFoundException
 from Infrastructure.Db.models import InterviewModel
 from Infrastructure.Db.mappers import (
     interview_model_to_entity,
@@ -27,7 +26,7 @@ class SqlInterviewRepository(InterviewRepository):
             await self.db.commit()
             await self.db.refresh(model)
             return interview_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             await self.db.rollback()
             raise
     
@@ -40,17 +39,17 @@ class SqlInterviewRepository(InterviewRepository):
             if not model:
                 return None
             return interview_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             raise
     
-    async def update(self, interview: Interview) -> Interview:
+    async def update(self, interview: Interview) -> Optional[Interview]:
         try:
             result = await self.db.execute(
                 select(InterviewModel).filter(InterviewModel.interview_id == str(interview.interview_id))
             )
             model = result.scalar_one_or_none()
             if not model:
-                raise InterviewNotFoundException(interview.interview_id)
+                return None
             model.topic = interview.topic
             model.status = interview.status.value
             model.updated_at = interview.updated_at
@@ -58,7 +57,7 @@ class SqlInterviewRepository(InterviewRepository):
             await self.db.commit()
             await self.db.refresh(model)
             return interview_model_to_entity(model)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             await self.db.rollback()
             raise
     
@@ -72,7 +71,7 @@ class SqlInterviewRepository(InterviewRepository):
             if deleted_count == 0:
                 return False
             return True
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             await self.db.rollback()
             raise
     
@@ -81,5 +80,5 @@ class SqlInterviewRepository(InterviewRepository):
             result = await self.db.execute(select(InterviewModel))
             models = result.scalars().all()
             return [interview_model_to_entity(model) for model in models]
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             raise
