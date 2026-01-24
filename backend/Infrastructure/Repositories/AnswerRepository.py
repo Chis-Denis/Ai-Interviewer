@@ -16,13 +16,22 @@ class SqlAnswerRepository(AnswerRepository):
         self.db = db
     
     async def create(self, answer: Answer) -> Answer:
-        pass
+        model = answer_entity_to_model(answer)
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return answer_model_to_entity(model)
     
     async def get_by_id(self, answer_id: UUID) -> Optional[Answer]:
-        pass
+        model = self.db.query(AnswerModel).filter(AnswerModel.answer_id == str(answer_id)).first()
+        if not model:
+            return None
+        return answer_model_to_entity(model)
     
     async def get_by_interview_id(self, interview_id: UUID) -> List[Answer]:
-        pass
+        models = self.db.query(AnswerModel).filter(AnswerModel.interview_id == str(interview_id)).order_by(AnswerModel.created_at).all()
+        return [answer_model_to_entity(model) for model in models]
     
     async def get_by_question_id(self, question_id: UUID) -> List[Answer]:
-        pass
+        models = self.db.query(AnswerModel).filter(AnswerModel.question_id == str(question_id)).order_by(AnswerModel.created_at).all()
+        return [answer_model_to_entity(model) for model in models]

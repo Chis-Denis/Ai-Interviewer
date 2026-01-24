@@ -16,13 +16,28 @@ class SqlQuestionRepository(QuestionRepository):
         self.db = db
     
     async def create(self, question: Question) -> Question:
-        pass
+        model = question_entity_to_model(question)
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return question_model_to_entity(model)
     
     async def get_by_id(self, question_id: UUID) -> Optional[Question]:
-        pass
+        model = self.db.query(QuestionModel).filter(QuestionModel.question_id == str(question_id)).first()
+        if not model:
+            return None
+        return question_model_to_entity(model)
     
     async def get_by_interview_id(self, interview_id: UUID) -> List[Question]:
-        pass
+        models = self.db.query(QuestionModel).filter(QuestionModel.interview_id == str(interview_id)).order_by(QuestionModel.question_order).all()
+        return [question_model_to_entity(model) for model in models]
     
     async def update(self, question: Question) -> Question:
-        pass
+        model = self.db.query(QuestionModel).filter(QuestionModel.question_id == str(question.question_id)).first()
+        if not model:
+            raise ValueError("Question not found")
+        model.text = question.text
+        model.question_order = question.question_order
+        self.db.commit()
+        self.db.refresh(model)
+        return question_model_to_entity(model)

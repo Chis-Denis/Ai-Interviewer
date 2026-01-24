@@ -5,16 +5,19 @@ from Application.UseCases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
     DeleteInterviewUseCase,
+    UpdateInterviewUseCase,
 )
 from Application.dtos import (
     CreateInterviewDTO,
     InterviewResponseDTO,
+    UpdateInterviewDTO,
 )
 from Presentation.Mapping import interview_to_response_dto
 from Composition import (
     get_create_interview_use_case,
     get_interview_use_case,
     get_delete_interview_use_case,
+    get_update_interview_use_case,
 )
 
 
@@ -47,6 +50,19 @@ async def get_all_interviews(
 ):
     interviews = await use_case.execute_all()
     return [interview_to_response_dto(interview) for interview in interviews]
+
+
+@router.patch("/{interview_id}", response_model=InterviewResponseDTO)
+async def update_interview(
+    interview_id: UUID,
+    dto: UpdateInterviewDTO,
+    use_case: UpdateInterviewUseCase = Depends(get_update_interview_use_case),
+):
+    try:
+        interview = await use_case.execute(interview_id, dto)
+        return interview_to_response_dto(interview)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.delete("/{interview_id}")
