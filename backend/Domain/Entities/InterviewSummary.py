@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
 from uuid import UUID, uuid4
 
@@ -23,7 +23,7 @@ class InterviewSummary:
         self.sentiment_score = sentiment_score
         self.sentiment_label = sentiment_label
         self.full_summary_text = full_summary_text
-        self.created_at = created_at or datetime.utcnow()
+        self.created_at = created_at or datetime.now(timezone.utc)
     
     def __repr__(self) -> str:
         return f"<InterviewSummary(id={self.summary_id}, interview_id={self.interview_id}, themes={len(self.themes)})>"

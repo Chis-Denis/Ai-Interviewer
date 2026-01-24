@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 
@@ -17,7 +17,7 @@ class Answer:
         self.text = text
         self.question_id = question_id
         self.interview_id = interview_id
-        self.created_at = created_at or datetime.utcnow()
+        self.created_at = created_at or datetime.now(timezone.utc)
     
     def __repr__(self) -> str:
         return f"<Answer(id={self.answer_id}, text='{self.text[:50]}...')>"

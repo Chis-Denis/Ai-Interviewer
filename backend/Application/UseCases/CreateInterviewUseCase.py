@@ -9,4 +9,6 @@ class CreateInterviewUseCase:
         self.interview_repository = interview_repository
     
     async def execute(self, dto: CreateInterviewDTO) -> Interview:
-        pass
+        from Domain.Entities import Interview
+        interview = Interview(topic=dto.topic)
+        return await self.interview_repository.create(interview)
