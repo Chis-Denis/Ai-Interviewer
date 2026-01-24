@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from uuid import UUID
 from typing import List
 from Application.UseCases import (
@@ -13,6 +13,7 @@ from Application.dtos import (
     UpdateInterviewDTO,
 )
 from Presentation.Mapping import interview_to_response_dto
+from Presentation.Validations.error_schemas import ValidationErrorResponse
 from Composition import (
     get_create_interview_use_case,
     get_interview_use_case,
@@ -24,7 +25,14 @@ from Composition import (
 router = APIRouter(prefix="/interviews", tags=["interviews"])
 
 
-@router.post("/", response_model=InterviewResponseDTO)
+@router.post(
+    "/",
+    response_model=InterviewResponseDTO,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        422: {"model": ValidationErrorResponse, "description": "Validation Error"},
+    }
+)
 async def create_interview(
     dto: CreateInterviewDTO,
     use_case: CreateInterviewUseCase = Depends(get_create_interview_use_case),
@@ -33,18 +41,27 @@ async def create_interview(
     return interview_to_response_dto(interview)
 
 
-@router.get("/{interview_id}", response_model=InterviewResponseDTO)
+@router.get(
+    "/{interview_id}",
+    response_model=InterviewResponseDTO,
+    status_code=status.HTTP_200_OK,
+    responses={
+        404: {"description": "Interview not found"},
+    }
+)
 async def get_interview(
     interview_id: UUID,
     use_case: GetInterviewUseCase = Depends(get_interview_use_case),
 ):
     interview = await use_case.execute(interview_id)
-    if not interview:
-        raise HTTPException(status_code=404, detail="Interview not found")
     return interview_to_response_dto(interview)
 
 
-@router.get("/", response_model=List[InterviewResponseDTO])
+@router.get(
+    "/",
+    response_model=List[InterviewResponseDTO],
+    status_code=status.HTTP_200_OK
+)
 async def get_all_interviews(
     use_case: GetInterviewUseCase = Depends(get_interview_use_case),
 ):
@@ -52,25 +69,34 @@ async def get_all_interviews(
     return [interview_to_response_dto(interview) for interview in interviews]
 
 
-@router.patch("/{interview_id}", response_model=InterviewResponseDTO)
+@router.patch(
+    "/{interview_id}",
+    response_model=InterviewResponseDTO,
+    status_code=status.HTTP_200_OK,
+    responses={
+        404: {"description": "Interview not found"},
+        422: {"model": ValidationErrorResponse, "description": "Validation Error"},
+    }
+)
 async def update_interview(
     interview_id: UUID,
     dto: UpdateInterviewDTO,
     use_case: UpdateInterviewUseCase = Depends(get_update_interview_use_case),
 ):
-    try:
-        interview = await use_case.execute(interview_id, dto)
-        return interview_to_response_dto(interview)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    interview = await use_case.execute(interview_id, dto)
+    return interview_to_response_dto(interview)
 
 
-@router.delete("/{interview_id}")
+@router.delete(
+    "/{interview_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        404: {"description": "Interview not found"},
+    }
+)
 async def delete_interview(
     interview_id: UUID,
     use_case: DeleteInterviewUseCase = Depends(get_delete_interview_use_case),
 ):
-    deleted = await use_case.execute(interview_id)
-    if not deleted:
-        raise HTTPException(status_code=404, detail="Interview not found")
-    return {"message": "Interview deleted successfully"}
+    await use_case.execute(interview_id)
+    return None

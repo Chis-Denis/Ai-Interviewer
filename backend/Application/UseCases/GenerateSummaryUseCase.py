@@ -5,6 +5,7 @@ from Application.RepositoryInterfaces import (
     InterviewSummaryRepository,
 )
 from uuid import UUID
+from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException
 
 
 class GenerateSummaryUseCase:
@@ -22,11 +23,11 @@ class GenerateSummaryUseCase:
     async def execute(self, interview_id: UUID) -> InterviewSummary:
         interview = await self.interview_repository.get_by_id(interview_id)
         if not interview:
-            raise ValueError("Interview not found")
+            raise InterviewNotFoundException(str(interview_id))
         
         answers = await self.answer_repository.get_by_interview_id(interview_id)
         if not answers:
-            raise ValueError("No answers found for this interview")
+            raise NoAnswersFoundException(str(interview_id))
         
         answer_texts = [answer.text for answer in answers]
         combined_text = " ".join(answer_texts)

@@ -1,5 +1,6 @@
 from uuid import UUID
 from Application.RepositoryInterfaces import InterviewRepository
+from Application.Exceptions import InterviewNotFoundException
 
 
 class DeleteInterviewUseCase:
@@ -7,5 +8,7 @@ class DeleteInterviewUseCase:
     def __init__(self, interview_repository: InterviewRepository):
         self.interview_repository = interview_repository
     
-    async def execute(self, interview_id: UUID) -> bool:
-        return await self.interview_repository.delete(interview_id)
+    async def execute(self, interview_id: UUID) -> None:
+        deleted = await self.interview_repository.delete(interview_id)
+        if not deleted:
+            raise InterviewNotFoundException(str(interview_id))

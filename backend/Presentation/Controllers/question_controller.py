@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from uuid import UUID
 from typing import List
 from Application.UseCases import GenerateQuestionUseCase, GetQuestionUseCase
 from Application.dtos import GenerateQuestionDTO, QuestionResponseDTO
 from Presentation.Mapping import question_to_response_dto
+from Presentation.Validations.error_schemas import ValidationErrorResponse
 from Composition import (
     get_generate_question_use_case,
     get_question_use_case,
@@ -13,30 +14,44 @@ from Composition import (
 router = APIRouter(prefix="/questions", tags=["questions"])
 
 
-@router.post("/", response_model=QuestionResponseDTO)
+@router.post(
+    "/",
+    response_model=QuestionResponseDTO,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        404: {"description": "Interview not found"},
+        422: {"model": ValidationErrorResponse, "description": "Validation Error"},
+    }
+)
 async def generate_question(
     dto: GenerateQuestionDTO,
     use_case: GenerateQuestionUseCase = Depends(get_generate_question_use_case),
 ):
-    try:
-        question = await use_case.execute(dto)
-        return question_to_response_dto(question)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    question = await use_case.execute(dto)
+    return question_to_response_dto(question)
 
 
-@router.get("/{question_id}", response_model=QuestionResponseDTO)
+@router.get(
+    "/{question_id}",
+    response_model=QuestionResponseDTO,
+    status_code=status.HTTP_200_OK,
+    responses={
+        404: {"description": "Question not found"},
+    }
+)
 async def get_question(
     question_id: UUID,
     use_case: GetQuestionUseCase = Depends(get_question_use_case),
 ):
     question = await use_case.execute(question_id)
-    if not question:
-        raise HTTPException(status_code=404, detail="Question not found")
     return question_to_response_dto(question)
 
 
-@router.get("/interview/{interview_id}", response_model=List[QuestionResponseDTO])
+@router.get(
+    "/interview/{interview_id}",
+    response_model=List[QuestionResponseDTO],
+    status_code=status.HTTP_200_OK
+)
 async def get_questions_by_interview(
     interview_id: UUID,
     use_case: GetQuestionUseCase = Depends(get_question_use_case),
