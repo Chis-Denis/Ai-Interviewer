@@ -4,7 +4,6 @@ from sqlalchemy.orm import declarative_base
 from Core.config import settings
 
 def get_async_database_url() -> str:
-    """Converts SQLite URL to async-compatible format."""
     if settings.DATABASE_URL.startswith("sqlite:///"):
         return settings.DATABASE_URL.replace("sqlite:///", "sqlite+aiosqlite:///")
     return settings.DATABASE_URL
@@ -27,7 +26,6 @@ Base = declarative_base()
 
 
 async def get_db():
-    """Async database session dependency."""
     async with AsyncSessionLocal() as session:
         try:
             yield session
@@ -36,7 +34,6 @@ async def get_db():
 
 
 async def init_db():
-    """Initialize database tables."""
     db_path = Path(settings.DATABASE_URL.replace("sqlite:///", ""))
     db_dir = db_path.parent
     if db_dir and not db_dir.exists():

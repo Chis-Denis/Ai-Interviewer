@@ -39,7 +39,6 @@ async def get_summary_repository(db: AsyncSession = Depends(get_db)) -> Intervie
 
 
 def get_settings():
-    """Provides settings configuration."""
     return settings
 
 
@@ -78,7 +77,13 @@ def get_generate_question_use_case(
     llm_service: LlmService = Depends(get_llm_service),
     settings = Depends(get_settings),
 ) -> GenerateQuestionUseCase:
-    return GenerateQuestionUseCase(question_repository, interview_repository, answer_repository, llm_service, settings)
+    return GenerateQuestionUseCase(
+        question_repository,
+        interview_repository,
+        answer_repository,
+        llm_service,
+        settings.MAX_QUESTIONS_PER_INTERVIEW,
+    )
 
 
 def get_question_use_case(

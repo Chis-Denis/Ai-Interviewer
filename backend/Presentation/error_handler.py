@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from Application.Exceptions import (
     NotFoundException,
     BusinessRuleException,
+    ValidationException,
     LlmServiceError,
 )
 from Presentation.Validations.error_schemas import ValidationErrorDetail, ValidationErrorResponse
@@ -54,8 +55,14 @@ async def business_rule_exception_handler(request: Request, exc: BusinessRuleExc
     )
 
 
+async def validation_exception_handler_app(request: Request, exc: ValidationException) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"error": "Validation Error", "message": exc.message}
+    )
+
+
 async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
-    """Handles database-related exceptions from SQLAlchemy."""
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
@@ -66,7 +73,6 @@ async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> 
 
 
 async def llm_service_exception_handler(request: Request, exc: LlmServiceError) -> JSONResponse:
-    """Handles LLM service-related exceptions."""
     from Core.config import settings
     
     error_message = "An error occurred while generating content. Please try again later."

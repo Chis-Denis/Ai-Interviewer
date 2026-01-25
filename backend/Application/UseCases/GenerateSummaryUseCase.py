@@ -9,7 +9,9 @@ from Application.RepositoryInterfaces import (
     QuestionRepository,
 )
 from Application.Service import LlmService
-from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException
+from Application.Service.llm_data import QuestionData, AnswerData
+from Application.dtos import SummaryResponseDTO
+from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException, ValidationException
 
 
 class GenerateSummaryUseCase:
@@ -39,19 +41,36 @@ class GenerateSummaryUseCase:
         
         questions = await self.question_repository.get_by_interview_id(interview_id)
         
-        summary_data = await self.llm_service.generate_summary(
+        question_data_list = [
+            QuestionData(text=q.text, question_order=q.question_order, question_id=q.question_id)
+            for q in questions
+        ]
+        
+        answer_data_list = [
+            AnswerData(text=a.text, question_id=a.question_id)
+            for a in answers
+        ]
+        
+        summary_data_dict = await self.llm_service.generate_summary(
             interview_topic=interview.topic,
-            answers=answers,
-            questions=questions,
+            answers=answer_data_list,
+            questions=question_data_list,
         )
+        
+        try:
+            summary_response = SummaryResponseDTO(**summary_data_dict)
+        except ValidationException:
+            raise
+        except Exception as e:
+            raise ValidationException(f"Failed to validate summary response: {str(e)}")
         
         summary = InterviewSummary(
             interview_id=interview_id,
-            themes=summary_data["themes"],
-            key_points=summary_data["key_points"],
-            sentiment_score=summary_data["sentiment_score"],
-            sentiment_label=summary_data["sentiment_label"],
-            full_summary_text=summary_data["full_summary_text"],
+            themes=summary_response.themes,
+            key_points=summary_response.key_points,
+            sentiment_score=summary_response.sentiment_score,
+            sentiment_label=summary_response.sentiment_label.value,
+            full_summary_text=summary_response.full_summary_text,
         )
         
         existing_summary = await self.summary_repository.get_by_interview_id(interview_id)

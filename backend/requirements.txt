@@ -17,6 +17,7 @@ python-dotenv==1.0.0
 
 # HTTP Client (for LLM API calls and testing)
 httpx>=0.28.1
+tenacity==8.2.3
 
 # Testing
 pytest==7.4.3

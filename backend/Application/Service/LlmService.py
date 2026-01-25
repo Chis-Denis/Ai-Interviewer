@@ -1,34 +1,27 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from uuid import UUID
 
-from Domain.Entities import Question, Answer
+from Application.Service.llm_data import QuestionData, AnswerData
 
 
 class LlmService(ABC):
-    """LLM service interface for generating questions and summaries."""
     
     @abstractmethod
     async def generate_question(
         self,
         topic: str,
         interview_id: UUID,
-        existing_questions: Optional[List[Question]] = None,
-        previous_answers: Optional[List[Answer]] = None,
+        existing_questions: Optional[List[QuestionData]] = None,
+        previous_answers: Optional[List[AnswerData]] = None,
     ) -> str:
-        """Generates interview question based on topic and context."""
         pass
     
     @abstractmethod
     async def generate_summary(
         self,
         interview_topic: str,
-        answers: List[Answer],
-        questions: List[Question],
-    ) -> dict:
-        """
-        Generates interview summary with themes, key points, and sentiment.
-        
-        Returns dict with: themes, key_points, sentiment_score, sentiment_label, full_summary_text.
-        """
+        answers: List[AnswerData],
+        questions: List[QuestionData],
+    ) -> Dict[str, Any]:
         pass
