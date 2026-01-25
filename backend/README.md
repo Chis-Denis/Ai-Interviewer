@@ -75,7 +75,6 @@ pip install -r requirements.txt
 5. Create a `.env` file in the backend directory (optional):
 ```env
 DATABASE_URL=sqlite:///./ai_interviewer.db
-SECRET_KEY=your-secret-key-here
 LLM_API_KEY=your-llm-api-key
 ENVIRONMENT=development
 ```

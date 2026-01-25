@@ -23,10 +23,6 @@ class Settings(BaseSettings):
     
     CORS_ORIGINS: List[str] = []
     
-    SECRET_KEY: str = ""
-    ALGORITHM: str = ""
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
     LLM_API_KEY: str = ""
     LLM_PROVIDER: str = "openai"
     LLM_MODEL: str = ""
