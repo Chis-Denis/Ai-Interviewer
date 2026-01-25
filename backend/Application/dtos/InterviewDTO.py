@@ -2,19 +2,13 @@ from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, field_serializer, field_validator
+from pydantic import BaseModel, field_serializer
 
 from Domain.Enums import InterviewStatus
-from Presentation.Validations.validators import validate_string_length
 
 
 class CreateInterviewDTO(BaseModel):
     topic: str
-    
-    @field_validator('topic')
-    @classmethod
-    def validate_topic(cls, v: str) -> str:
-        return validate_string_length(v, min_length=3, max_length=200)
 
 
 class InterviewResponseDTO(BaseModel):
@@ -41,10 +35,3 @@ class InterviewResponseDTO(BaseModel):
 class UpdateInterviewDTO(BaseModel):
     topic: Optional[str] = None
     status: Optional[InterviewStatus] = None
-    
-    @field_validator('topic')
-    @classmethod
-    def validate_topic(cls, v: Optional[str]) -> Optional[str]:
-        if v is None:
-            return v
-        return validate_string_length(v, min_length=3, max_length=200)

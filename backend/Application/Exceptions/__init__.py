@@ -2,6 +2,7 @@ from Application.Exceptions.base_exceptions import (
     ApplicationException,
     NotFoundException,
     BusinessRuleException,
+    LlmServiceError,
 )
 from Application.Exceptions.domain_exceptions import (
     InterviewNotFoundException,
@@ -19,6 +20,7 @@ __all__ = [
     "ApplicationException",
     "NotFoundException",
     "BusinessRuleException",
+    "LlmServiceError",
     "InterviewNotFoundException",
     "QuestionNotFoundException",
     "AnswerNotFoundException",

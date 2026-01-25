@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "AI Interviewer"
     APP_VERSION: str = "1.0.0"
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    DEBUG: bool = False
     
     # Server
     HOST: str = "0.0.0.0"
@@ -33,14 +33,14 @@ class Settings(BaseSettings):
     ]
     
     # Security
-    SECRET_KEY: str = "your-secret-key-change-in-production"
+    SECRET_KEY: str = ""
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # LLM Configuration
     LLM_API_KEY: str = ""
     LLM_PROVIDER: str = "openai"
-    LLM_MODEL: str = "gpt-4"
+    LLM_MODEL: str = "gpt-4o-mini"
     LLM_TEMPERATURE: float = 0.7
     LLM_MAX_TOKENS: int = 2000
     

@@ -3,6 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from Infrastructure.Db.database import get_db
 from Application.RepositoryInterfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
 from Infrastructure.Repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
+from Application.Service import LlmService
+from Infrastructure.Llm import OpenAIService
+from Core.config import settings
+
+
 from Application.UseCases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
@@ -33,6 +38,15 @@ async def get_summary_repository(db: AsyncSession = Depends(get_db)) -> Intervie
     return SqlInterviewSummaryRepository(db)
 
 
+def get_settings():
+    """Provides settings configuration."""
+    return settings
+
+
+def get_llm_service(settings = Depends(get_settings)) -> LlmService:
+    return OpenAIService(settings)
+
+
 def get_create_interview_use_case(
     repository: InterviewRepository = Depends(get_interview_repository)
 ) -> CreateInterviewUseCase:
@@ -60,8 +74,11 @@ def get_update_interview_use_case(
 def get_generate_question_use_case(
     question_repository: QuestionRepository = Depends(get_question_repository),
     interview_repository: InterviewRepository = Depends(get_interview_repository),
+    answer_repository: AnswerRepository = Depends(get_answer_repository),
+    llm_service: LlmService = Depends(get_llm_service),
+    settings = Depends(get_settings),
 ) -> GenerateQuestionUseCase:
-    return GenerateQuestionUseCase(question_repository, interview_repository)
+    return GenerateQuestionUseCase(question_repository, interview_repository, answer_repository, llm_service, settings)
 
 
 def get_question_use_case(
@@ -88,8 +105,10 @@ def get_generate_summary_use_case(
     interview_repository: InterviewRepository = Depends(get_interview_repository),
     answer_repository: AnswerRepository = Depends(get_answer_repository),
     summary_repository: InterviewSummaryRepository = Depends(get_summary_repository),
+    question_repository: QuestionRepository = Depends(get_question_repository),
+    llm_service: LlmService = Depends(get_llm_service),
 ) -> GenerateSummaryUseCase:
-    return GenerateSummaryUseCase(interview_repository, answer_repository, summary_repository)
+    return GenerateSummaryUseCase(interview_repository, answer_repository, summary_repository, question_repository, llm_service)
 
 
 def get_summary_use_case(

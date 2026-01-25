@@ -6,7 +6,9 @@ from Application.RepositoryInterfaces import (
     InterviewRepository,
     AnswerRepository,
     InterviewSummaryRepository,
+    QuestionRepository,
 )
+from Application.Service import LlmService
 from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException
 
 
@@ -17,10 +19,14 @@ class GenerateSummaryUseCase:
         interview_repository: InterviewRepository,
         answer_repository: AnswerRepository,
         summary_repository: InterviewSummaryRepository,
+        question_repository: QuestionRepository,
+        llm_service: LlmService,
     ):
         self.interview_repository = interview_repository
         self.answer_repository = answer_repository
         self.summary_repository = summary_repository
+        self.question_repository = question_repository
+        self.llm_service = llm_service
     
     async def execute(self, interview_id: UUID) -> InterviewSummary:
         interview = await self.interview_repository.get_by_id(interview_id)
@@ -31,19 +37,21 @@ class GenerateSummaryUseCase:
         if not answers:
             raise NoAnswersFoundException(interview_id)
         
-        answer_texts = [answer.text for answer in answers]
-        combined_text = " ".join(answer_texts)
+        questions = await self.question_repository.get_by_interview_id(interview_id)
         
-        themes = [f"Theme {i+1}" for i in range(min(3, len(answers)))]
-        key_points = [f"Key point from answer {i+1}" for i in range(min(5, len(answers)))]
+        summary_data = await self.llm_service.generate_summary(
+            interview_topic=interview.topic,
+            answers=answers,
+            questions=questions,
+        )
         
         summary = InterviewSummary(
             interview_id=interview_id,
-            themes=themes,
-            key_points=key_points,
-            sentiment_score=0.5,
-            sentiment_label="neutral",
-            full_summary_text=f"Summary of interview about {interview.topic}. Total answers: {len(answers)}",
+            themes=summary_data["themes"],
+            key_points=summary_data["key_points"],
+            sentiment_score=summary_data["sentiment_score"],
+            sentiment_label=summary_data["sentiment_label"],
+            full_summary_text=summary_data["full_summary_text"],
         )
         
         existing_summary = await self.summary_repository.get_by_interview_id(interview_id)

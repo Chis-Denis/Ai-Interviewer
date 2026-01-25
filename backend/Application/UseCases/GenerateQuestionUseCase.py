@@ -1,7 +1,8 @@
 from Domain.Entities import Question
 from Domain.Enums import InterviewStatus
 
-from Application.RepositoryInterfaces import QuestionRepository, InterviewRepository
+from Application.RepositoryInterfaces import QuestionRepository, InterviewRepository, AnswerRepository
+from Application.Service import LlmService
 from Application.dtos import GenerateQuestionDTO
 from Application.Exceptions import (
     InterviewNotFoundException,
@@ -9,7 +10,6 @@ from Application.Exceptions import (
     MaxQuestionsReachedException,
     InterviewNotInProgressException,
 )
-from Core.config import settings
 
 
 class GenerateQuestionUseCase:
@@ -18,9 +18,15 @@ class GenerateQuestionUseCase:
         self,
         question_repository: QuestionRepository,
         interview_repository: InterviewRepository,
+        answer_repository: AnswerRepository,
+        llm_service: LlmService,
+        settings: "Settings",
     ):
         self.question_repository = question_repository
         self.interview_repository = interview_repository
+        self.answer_repository = answer_repository
+        self.llm_service = llm_service
+        self.settings = settings
     
     async def execute(self, dto: GenerateQuestionDTO) -> Question:
         interview = await self.interview_repository.get_by_id(dto.interview_id)
@@ -38,15 +44,20 @@ class GenerateQuestionUseCase:
         
         existing_questions = await self.question_repository.get_by_interview_id(dto.interview_id)
         
-        max_questions = settings.MAX_QUESTIONS_PER_INTERVIEW
+        max_questions = self.settings.MAX_QUESTIONS_PER_INTERVIEW
         if len(existing_questions) >= max_questions:
             raise MaxQuestionsReachedException(dto.interview_id, max_questions)
         
         next_order = len(existing_questions) + 1
         
-        question_text = f"Tell me about {dto.topic}"
-        if existing_questions:
-            question_text = f"Based on your previous answers, can you elaborate more on {dto.topic}?"
+        previous_answers = await self.answer_repository.get_by_interview_id(dto.interview_id)
+        
+        question_text = await self.llm_service.generate_question(
+            topic=interview.topic,
+            interview_id=dto.interview_id,
+            existing_questions=existing_questions if existing_questions else None,
+            previous_answers=previous_answers if previous_answers else None,
+        )
         
         question = Question(
             text=question_text,

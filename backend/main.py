@@ -7,8 +7,9 @@ from Presentation.error_handler import (
     not_found_exception_handler,
     business_rule_exception_handler,
     database_exception_handler,
+    llm_service_exception_handler,
 )
-from Application.Exceptions import NotFoundException, BusinessRuleException
+from Application.Exceptions import NotFoundException, BusinessRuleException, LlmServiceError
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -33,6 +34,7 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(NotFoundException, not_found_exception_handler)
 app.add_exception_handler(BusinessRuleException, business_rule_exception_handler)
 app.add_exception_handler(SQLAlchemyError, database_exception_handler)
+app.add_exception_handler(LlmServiceError, llm_service_exception_handler)
 
 
 from Presentation.Routers import register_routers

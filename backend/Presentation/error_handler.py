@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from Application.Exceptions import (
     NotFoundException,
     BusinessRuleException,
+    LlmServiceError,
 )
 from Presentation.Validations.error_schemas import ValidationErrorDetail, ValidationErrorResponse
 
@@ -60,5 +61,22 @@ async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> 
         content={
             "error": "Database Error",
             "message": "An error occurred while processing your request. Please try again later."
+        }
+    )
+
+
+async def llm_service_exception_handler(request: Request, exc: LlmServiceError) -> JSONResponse:
+    """Handles LLM service-related exceptions."""
+    from Core.config import settings
+    
+    error_message = "An error occurred while generating content. Please try again later."
+    if settings.DEBUG:
+        error_message = str(exc)
+    
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "error": "LLM Service Error",
+            "message": error_message
         }
     )
