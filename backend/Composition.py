@@ -1,13 +1,8 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from Infrastructure.Db.database import get_db
+
 from Application.RepositoryInterfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
-from Infrastructure.Repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
 from Application.Service import LlmService
-from Infrastructure.Llm import OpenAIService
-from Core.config import settings
-
-
 from Application.UseCases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
@@ -20,6 +15,10 @@ from Application.UseCases import (
     GenerateSummaryUseCase,
     GetSummaryUseCase,
 )
+from Core.config import Settings, settings
+from Infrastructure.Db.database import get_db
+from Infrastructure.Llm import OpenAIService
+from Infrastructure.Repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
 
 
 async def get_interview_repository(db: AsyncSession = Depends(get_db)) -> InterviewRepository:
@@ -42,7 +41,7 @@ def get_settings():
     return settings
 
 
-def get_llm_service(settings = Depends(get_settings)) -> LlmService:
+def get_llm_service(settings: Settings = Depends(get_settings)) -> LlmService:
     return OpenAIService(settings)
 
 
@@ -75,7 +74,7 @@ def get_generate_question_use_case(
     interview_repository: InterviewRepository = Depends(get_interview_repository),
     answer_repository: AnswerRepository = Depends(get_answer_repository),
     llm_service: LlmService = Depends(get_llm_service),
-    settings = Depends(get_settings),
+    settings: Settings = Depends(get_settings),
 ) -> GenerateQuestionUseCase:
     return GenerateQuestionUseCase(
         question_repository,

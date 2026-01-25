@@ -14,9 +14,6 @@ from Application.Service.llm_data import QuestionData, AnswerData
 from Application.Exceptions import LlmServiceError
 from Infrastructure.Llm.prompt_builder import PromptBuilder
 from Infrastructure.Llm.response_parser import ResponseParser
-from Infrastructure.Llm.circuit_breaker import CircuitBreaker, CircuitBreakerOpenError
-
-_circuit_breaker = CircuitBreaker(failure_threshold=5, timeout_seconds=60)
 
 
 class OpenAIService(LlmService):
@@ -42,10 +39,8 @@ class OpenAIService(LlmService):
         prompt = PromptBuilder.build_question_prompt(context)
         
         try:
-            response = await _circuit_breaker.call(self._call_openai_api, prompt)
+            response = await self._call_openai_api(prompt)
             return response.strip()
-        except CircuitBreakerOpenError as e:
-            raise LlmServiceError(f"OpenAI service is temporarily unavailable: {str(e)}")
         except httpx.HTTPStatusError as e:
             status_code = e.response.status_code
             error_msg = f"OpenAI API error: {status_code}"
@@ -73,10 +68,8 @@ class OpenAIService(LlmService):
         
         prompt = PromptBuilder.build_summary_prompt(interview_topic, questions, answers)
         try:
-            response_text = await _circuit_breaker.call(self._call_openai_api, prompt)
+            response_text = await self._call_openai_api(prompt)
             return ResponseParser.parse_summary_response(response_text)
-        except CircuitBreakerOpenError as e:
-            raise LlmServiceError(f"OpenAI service is temporarily unavailable: {str(e)}")
         except httpx.HTTPStatusError as e:
             status_code = e.response.status_code
             error_msg = f"OpenAI API error: {status_code}"

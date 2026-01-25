@@ -10,8 +10,15 @@ class InterviewSummaryResponseDTO(BaseModel):
     interview_id: UUID
     themes: List[str]
     key_points: List[str]
+    strengths: Optional[List[str]] = None
+    weaknesses: Optional[List[str]] = None
+    missing_information: Optional[List[str]] = None
     sentiment_score: Optional[float] = None
     sentiment_label: Optional[str] = None
+    confidence_score: Optional[float] = None
+    clarity_score: Optional[float] = None
+    consistency_score: Optional[float] = None
+    overall_usefulness: Optional[float] = None
     full_summary_text: Optional[str] = None
     created_at: datetime
 

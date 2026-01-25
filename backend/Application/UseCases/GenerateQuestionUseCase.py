@@ -48,6 +48,10 @@ class GenerateQuestionUseCase:
         if len(existing_questions) >= self.max_questions_per_interview:
             raise MaxQuestionsReachedException(dto.interview_id, self.max_questions_per_interview)
         
+        if interview.status == InterviewStatus.NOT_STARTED:
+            interview.start()
+            await self.interview_repository.update(interview)
+        
         next_order = len(existing_questions) + 1
         
         previous_answers = await self.answer_repository.get_by_interview_id(dto.interview_id)

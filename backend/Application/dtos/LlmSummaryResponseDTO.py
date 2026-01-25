@@ -5,16 +5,14 @@ from Domain.Enums import SentimentLabel
 from Application.Exceptions import ValidationException
 
 
-class SummaryResponseDTO(BaseModel):
+class LlmSummaryResponseDTO(BaseModel):
     themes: List[str]
     key_points: List[str]
     sentiment_score: float
     sentiment_label: SentimentLabel
-    confidence_score: float
-    clarity_score: float
     strengths: List[str]
     weaknesses: List[str]
-    consistency_score: float
+    missing_information: List[str]
     full_summary_text: str
     
     @field_validator('sentiment_score')
@@ -22,27 +20,6 @@ class SummaryResponseDTO(BaseModel):
     def validate_sentiment_score(cls, v: float) -> float:
         if not 0.0 <= v <= 1.0:
             raise ValidationException("sentiment_score must be between 0.0 and 1.0")
-        return v
-    
-    @field_validator('confidence_score')
-    @classmethod
-    def validate_confidence_score(cls, v: float) -> float:
-        if not 0.0 <= v <= 1.0:
-            raise ValidationException("confidence_score must be between 0.0 and 1.0")
-        return v
-    
-    @field_validator('clarity_score')
-    @classmethod
-    def validate_clarity_score(cls, v: float) -> float:
-        if not 0.0 <= v <= 1.0:
-            raise ValidationException("clarity_score must be between 0.0 and 1.0")
-        return v
-    
-    @field_validator('consistency_score')
-    @classmethod
-    def validate_consistency_score(cls, v: float) -> float:
-        if not 0.0 <= v <= 1.0:
-            raise ValidationException("consistency_score must be between 0.0 and 1.0")
         return v
     
     @field_validator('themes')
@@ -62,13 +39,14 @@ class SummaryResponseDTO(BaseModel):
     @field_validator('strengths')
     @classmethod
     def validate_strengths(cls, v: List[str]) -> List[str]:
-        if not v or len(v) == 0:
-            raise ValidationException("strengths cannot be empty")
-        return v
+        return v if v is not None else []
     
     @field_validator('weaknesses')
     @classmethod
     def validate_weaknesses(cls, v: List[str]) -> List[str]:
-        if not v or len(v) == 0:
-            raise ValidationException("weaknesses cannot be empty")
-        return v
+        return v if v is not None else []
+    
+    @field_validator('missing_information')
+    @classmethod
+    def validate_missing_information(cls, v: List[str]) -> List[str]:
+        return v if v is not None else []

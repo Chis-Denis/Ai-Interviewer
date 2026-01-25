@@ -37,5 +37,8 @@ class Interview:
         self.status = InterviewStatus.CANCELLED
         self.updated_at = datetime.now(timezone.utc)
     
+    def touch(self) -> None:
+        self.updated_at = datetime.now(timezone.utc)
+    
     def __repr__(self) -> str:
         return f"<Interview(id={self.interview_id}, topic='{self.topic}', status={self.status.value})>"

@@ -68,6 +68,13 @@ class InterviewSummaryModel(Base):
     key_points = Column(JSON, nullable=False)
     sentiment_score = Column(Float, nullable=True)
     sentiment_label = Column(String, nullable=True)
+    confidence_score = Column(Float, nullable=True)
+    clarity_score = Column(Float, nullable=True)
+    strengths = Column(JSON, nullable=True)
+    weaknesses = Column(JSON, nullable=True)
+    consistency_score = Column(Float, nullable=True)
+    missing_information = Column(JSON, nullable=True)
+    overall_usefulness = Column(Float, nullable=True)
     full_summary_text = Column(Text, nullable=True)
     created_at = Column(DateTime, default=get_utc_now, nullable=False)
     

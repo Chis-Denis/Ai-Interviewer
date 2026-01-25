@@ -63,11 +63,17 @@ async def validation_exception_handler_app(request: Request, exc: ValidationExce
 
 
 async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
+    from Core.config import settings
+    
+    error_message = "An error occurred while processing your request. Please try again later."
+    if settings.DEBUG:
+        error_message = str(exc)
+    
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
             "error": "Database Error",
-            "message": "An error occurred while processing your request. Please try again later."
+            "message": error_message
         }
     )
 

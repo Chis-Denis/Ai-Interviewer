@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from Presentation.middleware import setup_middleware
 from Presentation.error_handler import (
