@@ -1,7 +1,9 @@
 from Domain.Entities import Question
 from Domain.Enums import InterviewStatus
 
-from Application.RepositoryInterfaces import QuestionRepository, InterviewRepository
+from Application.RepositoryInterfaces import QuestionRepository, InterviewRepository, AnswerRepository
+from Application.Service import LlmService
+from Application.Service.llm_data import QuestionData, AnswerData
 from Application.dtos import GenerateQuestionDTO
 from Application.Exceptions import (
     InterviewNotFoundException,
@@ -9,7 +11,6 @@ from Application.Exceptions import (
     MaxQuestionsReachedException,
     InterviewNotInProgressException,
 )
-from Core.config import settings
 
 
 class GenerateQuestionUseCase:
@@ -18,9 +19,15 @@ class GenerateQuestionUseCase:
         self,
         question_repository: QuestionRepository,
         interview_repository: InterviewRepository,
+        answer_repository: AnswerRepository,
+        llm_service: LlmService,
+        max_questions_per_interview: int,
     ):
         self.question_repository = question_repository
         self.interview_repository = interview_repository
+        self.answer_repository = answer_repository
+        self.llm_service = llm_service
+        self.max_questions_per_interview = max_questions_per_interview
     
     async def execute(self, dto: GenerateQuestionDTO) -> Question:
         interview = await self.interview_repository.get_by_id(dto.interview_id)
@@ -38,15 +45,33 @@ class GenerateQuestionUseCase:
         
         existing_questions = await self.question_repository.get_by_interview_id(dto.interview_id)
         
-        max_questions = settings.MAX_QUESTIONS_PER_INTERVIEW
-        if len(existing_questions) >= max_questions:
-            raise MaxQuestionsReachedException(dto.interview_id, max_questions)
+        if len(existing_questions) >= self.max_questions_per_interview:
+            raise MaxQuestionsReachedException(dto.interview_id, self.max_questions_per_interview)
+        
+        if interview.status == InterviewStatus.NOT_STARTED:
+            interview.start()
+            await self.interview_repository.update(interview)
         
         next_order = len(existing_questions) + 1
         
-        question_text = f"Tell me about {dto.topic}"
-        if existing_questions:
-            question_text = f"Based on your previous answers, can you elaborate more on {dto.topic}?"
+        previous_answers = await self.answer_repository.get_by_interview_id(dto.interview_id)
+        
+        question_data_list = [
+            QuestionData(text=q.text, question_order=q.question_order, question_id=q.question_id)
+            for q in existing_questions
+        ] if existing_questions else None
+        
+        answer_data_list = [
+            AnswerData(text=a.text, question_id=a.question_id)
+            for a in previous_answers
+        ] if previous_answers else None
+        
+        question_text = await self.llm_service.generate_question(
+            topic=interview.topic,
+            interview_id=dto.interview_id,
+            existing_questions=question_data_list,
+            previous_answers=answer_data_list,
+        )
         
         question = Question(
             text=question_text,

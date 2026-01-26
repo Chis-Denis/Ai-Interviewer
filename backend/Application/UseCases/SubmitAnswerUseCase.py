@@ -76,6 +76,12 @@ class SubmitAnswerUseCase:
                 f"Answer already exists for question {dto.question_id}"
             )
         
+        if interview.status == InterviewStatus.NOT_STARTED:
+            interview.start()
+        
+        interview.touch()
+        await self.interview_repository.update(interview)
+        
         answer = Answer(
             text=dto.text,
             question_id=dto.question_id,

@@ -1,14 +1,17 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from Presentation.middleware import setup_middleware
 from Presentation.error_handler import (
     validation_exception_handler,
     not_found_exception_handler,
     business_rule_exception_handler,
+    validation_exception_handler_app,
     database_exception_handler,
+    llm_service_exception_handler,
 )
-from Application.Exceptions import NotFoundException, BusinessRuleException
+from Application.Exceptions import NotFoundException, BusinessRuleException, ValidationException, LlmServiceError
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -32,7 +35,9 @@ setup_middleware(app)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(NotFoundException, not_found_exception_handler)
 app.add_exception_handler(BusinessRuleException, business_rule_exception_handler)
+app.add_exception_handler(ValidationException, validation_exception_handler_app)
 app.add_exception_handler(SQLAlchemyError, database_exception_handler)
+app.add_exception_handler(LlmServiceError, llm_service_exception_handler)
 
 
 from Presentation.Routers import register_routers

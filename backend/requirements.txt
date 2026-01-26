@@ -15,13 +15,9 @@ pydantic-settings==2.1.0
 # Environment Variables
 python-dotenv==1.0.0
 
-# HTTP Client (for LLM API calls and testing)
+# HTTP Client (for LLM API calls)
 httpx>=0.28.1
-
-# Testing
-pytest==7.4.3
-pytest-asyncio==0.21.1
-pytest-cov==4.1.0
+tenacity==8.2.3
 
 # Development
 black==23.11.0

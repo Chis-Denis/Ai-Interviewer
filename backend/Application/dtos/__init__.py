@@ -14,6 +14,12 @@ from Application.dtos.AnswerDTO import (
 from Application.dtos.InterviewSummaryDTO import (
     InterviewSummaryResponseDTO,
 )
+from Application.dtos.SummaryResponseDTO import (
+    SummaryResponseDTO,
+)
+from Application.dtos.LlmSummaryResponseDTO import (
+    LlmSummaryResponseDTO,
+)
 
 __all__ = [
     "CreateInterviewDTO",
@@ -24,4 +30,6 @@ __all__ = [
     "CreateAnswerDTO",
     "AnswerResponseDTO",
     "InterviewSummaryResponseDTO",
+    "SummaryResponseDTO",
+    "LlmSummaryResponseDTO",
 ]

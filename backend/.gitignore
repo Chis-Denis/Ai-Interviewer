@@ -47,15 +47,7 @@ venv.bak/
 *.db
 *.sqlite
 *.sqlite3
-Infrastructure/Db/*.db
-Infrastructure/Db/ai_interviewer.db
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.hypothesis/
+ai_interviewer.db
 
 # Logs
 *.log
@@ -77,10 +69,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-# FastAPI
-*.pyc
-__pycache__/
 
 # OS
 Thumbs.db

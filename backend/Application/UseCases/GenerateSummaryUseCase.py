@@ -1,13 +1,20 @@
 from uuid import UUID
 
 from Domain.Entities import InterviewSummary
+from Domain.Enums import InterviewStatus
 
 from Application.RepositoryInterfaces import (
     InterviewRepository,
     AnswerRepository,
     InterviewSummaryRepository,
+    QuestionRepository,
 )
-from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException
+from Application.Service import LlmService
+from Application.Service.llm_data import QuestionData, AnswerData
+from Application.dtos import LlmSummaryResponseDTO
+from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException, ValidationException
+from Application.Analysis.AnswerEvaluator import AnswerEvaluator
+from Application.Analysis.scoring import ScoringCalculator
 
 
 class GenerateSummaryUseCase:
@@ -17,10 +24,14 @@ class GenerateSummaryUseCase:
         interview_repository: InterviewRepository,
         answer_repository: AnswerRepository,
         summary_repository: InterviewSummaryRepository,
+        question_repository: QuestionRepository,
+        llm_service: LlmService,
     ):
         self.interview_repository = interview_repository
         self.answer_repository = answer_repository
         self.summary_repository = summary_repository
+        self.question_repository = question_repository
+        self.llm_service = llm_service
     
     async def execute(self, interview_id: UUID) -> InterviewSummary:
         interview = await self.interview_repository.get_by_id(interview_id)
@@ -31,19 +42,48 @@ class GenerateSummaryUseCase:
         if not answers:
             raise NoAnswersFoundException(interview_id)
         
-        answer_texts = [answer.text for answer in answers]
-        combined_text = " ".join(answer_texts)
+        questions = await self.question_repository.get_by_interview_id(interview_id)
         
-        themes = [f"Theme {i+1}" for i in range(min(3, len(answers)))]
-        key_points = [f"Key point from answer {i+1}" for i in range(min(5, len(answers)))]
+        question_data_list = [
+            QuestionData(text=q.text, question_order=q.question_order, question_id=q.question_id)
+            for q in questions
+        ]
+        
+        answer_data_list = [
+            AnswerData(text=a.text, question_id=a.question_id)
+            for a in answers
+        ]
+        
+        llm_summary_dict = await self.llm_service.generate_summary(
+            interview_topic=interview.topic,
+            answers=answer_data_list,
+            questions=question_data_list,
+        )
+        
+        try:
+            llm_summary = LlmSummaryResponseDTO(**llm_summary_dict)
+        except ValidationException:
+            raise
+        except Exception as e:
+            raise ValidationException(f"Failed to validate LLM summary response: {str(e)}") from e
+        
+        evaluation_result = AnswerEvaluator.evaluate_all_answers(answer_data_list)
+        scoring_result = ScoringCalculator.calculate_all_scores(answer_data_list)
         
         summary = InterviewSummary(
             interview_id=interview_id,
-            themes=themes,
-            key_points=key_points,
-            sentiment_score=0.5,
-            sentiment_label="neutral",
-            full_summary_text=f"Summary of interview about {interview.topic}. Total answers: {len(answers)}",
+            themes=llm_summary.themes,
+            key_points=llm_summary.key_points,
+            sentiment_score=llm_summary.sentiment_score,
+            sentiment_label=llm_summary.sentiment_label.value,
+            confidence_score=evaluation_result['confidence_score'],
+            clarity_score=evaluation_result['clarity_score'],
+            strengths=llm_summary.strengths,
+            weaknesses=llm_summary.weaknesses,
+            consistency_score=scoring_result['consistency_score'],
+            missing_information=llm_summary.missing_information,
+            overall_usefulness=scoring_result['overall_usefulness'],
+            full_summary_text=llm_summary.full_summary_text,
         )
         
         existing_summary = await self.summary_repository.get_by_interview_id(interview_id)
@@ -52,6 +92,11 @@ class GenerateSummaryUseCase:
             updated_summary = await self.summary_repository.update(summary)
             if not updated_summary:
                 raise SummaryNotFoundException(interview_id)
-            return updated_summary
+        else:
+            updated_summary = await self.summary_repository.create(summary)
         
-        return await self.summary_repository.create(summary)
+        if interview.status != InterviewStatus.COMPLETED:
+            interview.complete()
+            await self.interview_repository.update(interview)
+        
+        return updated_summary

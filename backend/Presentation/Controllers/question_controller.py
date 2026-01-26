@@ -34,22 +34,6 @@ async def generate_question(
 
 
 @router.get(
-    "/{question_id}",
-    response_model=QuestionResponseDTO,
-    status_code=status.HTTP_200_OK,
-    responses={
-        404: {"description": "Question not found"},
-    }
-)
-async def get_question(
-    question_id: UUID,
-    use_case: GetQuestionUseCase = Depends(get_question_use_case),
-):
-    question = await use_case.execute(question_id)
-    return question_to_response_dto(question)
-
-
-@router.get(
     "/interview/{interview_id}",
     response_model=List[QuestionResponseDTO],
     status_code=status.HTTP_200_OK,
