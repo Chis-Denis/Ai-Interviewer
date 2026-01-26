@@ -126,11 +126,10 @@ class ScoringConstants:
         ]
         
         MANIPULATION_PATTERNS = [
-            'help me', 'tell me', 'give me', 'dami', 'zi si mie', 'te rog', 'please give',
-            'i need', 'i want', 'i beg', 'hai te rog', 'dami jobu', 'dami pace',
-            'answer this', 'explain', 'do it for me', 'tell me the answer',
-            'murit', 'bunicu', 'nevoie de bani', 'ingrop', 'died', 'grandpa',
-            'nu stiu', "don't know", "i don't know", 'idk', 'no idea'
+            'help me', 'tell me the answer', 'give me the answer', 'dami', 'zi si mie', 'te rog', 'please give me',
+            'i need the answer', 'i want the answer', 'i beg you', 'hai te rog', 'dami jobu',
+            'answer this for me', 'do it for me', 'tell me the answer','nevoie de bani', 'ingrop', 'died',
+
         ]
     
     class RegexPatterns:

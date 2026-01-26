@@ -7,7 +7,8 @@ class AnswerMetrics:
     
     @staticmethod
     def calculate_word_count(text: str) -> int:
-        return len(text.split(ScoringConstants.TextProcessing.SPACE_CHAR))
+        normalized_text = ' '.join(text.split())
+        return len(normalized_text.split(ScoringConstants.TextProcessing.SPACE_CHAR)) if normalized_text else 0
     
     @staticmethod
     def calculate_sentence_count(text: str) -> int:
@@ -38,7 +39,13 @@ class AnswerMetrics:
     @staticmethod
     def detect_manipulation_attempts(text: str) -> bool:
         text_lower = text.lower()
-        return any(pattern in text_lower for pattern in ScoringConstants.KeywordLists.MANIPULATION_PATTERNS)
+        manipulation_patterns = ScoringConstants.KeywordLists.MANIPULATION_PATTERNS
+        
+        for pattern in manipulation_patterns:
+            if pattern in text_lower:
+                return True
+        
+        return False
     
     @staticmethod
     def detect_gibberish(text: str) -> bool:
