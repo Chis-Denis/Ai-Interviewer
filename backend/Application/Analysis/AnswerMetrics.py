@@ -37,4 +37,16 @@ class AnswerMetrics:
     @staticmethod
     def calculate_completeness_score(text: str) -> float:
         word_count = AnswerMetrics.calculate_word_count(text)
-        return min(1.0, word_count / 100.0)
+        
+        if word_count >= 50:
+            return 1.0
+        elif word_count >= 30:
+            return 0.8
+        elif word_count >= 20:
+            return 0.6
+        elif word_count >= 15:
+            return 0.4
+        elif word_count >= 10:
+            return 0.25
+        else:
+            return 0.1

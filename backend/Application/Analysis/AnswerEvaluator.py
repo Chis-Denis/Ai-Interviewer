@@ -12,21 +12,25 @@ class AnswerEvaluator:
         has_structure = AnswerMetrics.has_structure_indicators(text)
         
         if word_count < 5:
-            return 0.1
+            return 0.05
         elif word_count < 10:
-            return 0.3
+            return 0.15
+        elif word_count < 15:
+            return 0.35
         
-        score = 0.5
+        score = 0.65
         
         if sentence_count >= 2:
-            score += 0.2
+            score += 0.15
+        if sentence_count >= 3:
+            score += 0.05
         
         if has_structure:
-            score += 0.2
+            score += 0.15
         
         avg_words_per_sentence = word_count / max(sentence_count, 1)
-        if 10 <= avg_words_per_sentence <= 25:
-            score += 0.1
+        if 8 <= avg_words_per_sentence <= 30:
+            score += 0.05
         
         return min(score, 1.0)
     
@@ -37,12 +41,19 @@ class AnswerEvaluator:
         has_examples = AnswerMetrics.has_examples(text)
         has_metrics = AnswerMetrics.has_metrics_or_numbers(text)
         
-        score = completeness * 0.5
+        if word_count < 10:
+            return 0.1
+        elif word_count < 15:
+            return 0.25
         
-        if word_count >= 50:
+        score = completeness * 0.6
+        
+        if word_count >= 40:
             score += 0.2
-        elif word_count >= 30:
-            score += 0.1
+        elif word_count >= 25:
+            score += 0.15
+        elif word_count >= 15:
+            score += 0.05
         
         if has_examples:
             score += 0.15
