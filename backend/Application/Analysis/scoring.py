@@ -12,8 +12,8 @@ class ScoringCalculator:
         if len(answers) < ScoringConstants.MIN_ANSWERS_FOR_CONSISTENCY:
             return ScoringConstants.ZERO_SCORE
         
-        manipulation_count = sum(1 for a in answers if AnswerMetrics.detect_manipulation_attempts(a.text))
-        gibberish_count = sum(1 for a in answers if AnswerMetrics.detect_gibberish(a.text))
+        manipulation_count = sum(1 for answer in answers if AnswerMetrics.detect_manipulation_attempts(answer.text))
+        gibberish_count = sum(1 for answer in answers if AnswerMetrics.detect_gibberish(answer.text))
         
         if manipulation_count > 0 or gibberish_count > 0:
             bad_answer_ratio = (manipulation_count + gibberish_count) / len(answers)
@@ -22,7 +22,7 @@ class ScoringCalculator:
             else:
                 return ScoringConstants.LOW_CONSISTENCY_PENALTY
         
-        word_counts = [AnswerMetrics.calculate_word_count(a.text) for a in answers]
+        word_counts = [AnswerMetrics.calculate_word_count(answer.text) for answer in answers]
         avg_length = sum(word_counts) / len(word_counts)
         thresholds = ScoringConstants.WordCountThresholds
         consistency = ScoringConstants.ConsistencyScores
@@ -36,7 +36,7 @@ class ScoringCalculator:
             return consistency.SHORT_AVG_PENALTY
         
         mean = avg_length
-        raw_variance = sum((x - mean) ** 2 for x in word_counts) / len(word_counts)
+        raw_variance = sum((word_count - mean) ** 2 for word_count in word_counts) / len(word_counts)
         standard_deviation = raw_variance ** 0.5
         coefficient_of_variation = standard_deviation / avg_length if avg_length > 0 else ScoringConstants.MAX_SCORE
         

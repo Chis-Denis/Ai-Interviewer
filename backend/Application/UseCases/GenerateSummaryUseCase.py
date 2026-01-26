@@ -45,13 +45,13 @@ class GenerateSummaryUseCase:
         questions = await self.question_repository.get_by_interview_id(interview_id)
         
         question_data_list = [
-            QuestionData(text=q.text, question_order=q.question_order, question_id=q.question_id)
-            for q in questions
+            QuestionData(text=question.text, question_order=question.question_order, question_id=question.question_id)
+            for question in questions
         ]
         
         answer_data_list = [
-            AnswerData(text=a.text, question_id=a.question_id)
-            for a in answers
+            AnswerData(text=answer.text, question_id=answer.question_id)
+            for answer in answers
         ]
         
         llm_summary_dict = await self.llm_orchestrator.generate_summary(

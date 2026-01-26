@@ -51,10 +51,10 @@ class SubmitAnswerUseCase:
         existing_question_ids = {answer.question_id for answer in existing_answers}
         
         all_questions = await self.question_repository.get_by_interview_id(dto.interview_id)
-        sorted_questions = sorted(all_questions, key=lambda q: q.question_order)
+        sorted_questions = sorted(all_questions, key=lambda question: question.question_order)
         
         current_question_order = next(
-            (q.question_order for q in sorted_questions if q.question_id == dto.question_id),
+            (question.question_order for question in sorted_questions if question.question_id == dto.question_id),
             None
         )
         
@@ -63,11 +63,11 @@ class SubmitAnswerUseCase:
                 f"Question {dto.question_id} not found in interview {dto.interview_id}"
             )
         
-        for q in sorted_questions:
-            if q.question_order < current_question_order and q.question_id not in existing_question_ids:
+        for question in sorted_questions:
+            if question.question_order < current_question_order and question.question_id not in existing_question_ids:
                 raise InvalidAnswerOrderException(
                     f"Cannot submit answer for question {dto.question_id} (order {current_question_order}). "
-                    f"Please answer question {q.question_id} (order {q.question_order}) first."
+                    f"Please answer question {question.question_id} (order {question.question_order}) first."
                 )
         
         existing_answers_for_question = await self.answer_repository.get_by_question_id(dto.question_id)

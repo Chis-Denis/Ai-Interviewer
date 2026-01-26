@@ -97,8 +97,8 @@ class AnswerEvaluator:
                 'confidence_score': ScoringConstants.ZERO_SCORE,
             }
         
-        clarity_scores = [AnswerEvaluator.calculate_clarity_score(a.text) for a in answers]
-        confidence_scores = [AnswerEvaluator.calculate_confidence_score(a.text) for a in answers]
+        clarity_scores = [AnswerEvaluator.calculate_clarity_score(answer.text) for answer in answers]
+        confidence_scores = [AnswerEvaluator.calculate_confidence_score(answer.text) for answer in answers]
         
         avg_clarity = sum(clarity_scores) / len(clarity_scores)
         avg_confidence = sum(confidence_scores) / len(confidence_scores)
