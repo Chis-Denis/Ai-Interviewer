@@ -8,6 +8,7 @@ from tenacity import (
 
 from Application.Services.LLMClient import LLMClient
 from Application.Exceptions import LlmServiceError
+from Application.Services.service_constants import ServiceConstants
 from Core.config import Settings
 
 
@@ -17,7 +18,7 @@ class OpenAIClient(LLMClient):
         self.settings = settings
         self.api_key = settings.LLM_API_KEY.strip() if settings.LLM_API_KEY else ""
         self.base_url = settings.LLM_BASE_URL
-        self.timeout = 30.0
+        self.timeout = ServiceConstants.LLMClient.DEFAULT_TIMEOUT_SECONDS
         self.client = httpx.AsyncClient(timeout=self.timeout)
     
     async def call(self, prompt: str) -> str:
@@ -35,14 +36,19 @@ class OpenAIClient(LLMClient):
                     error_data = e.response.json()
                     error_msg += f" - {error_data.get('error', {}).get('message', e.response.text)}"
                 except (ValueError, KeyError):
-                    error_msg += f" - {e.response.text[:200]}"
+                    truncate_length = ServiceConstants.LLMClient.ERROR_TEXT_TRUNCATE_LENGTH
+                    error_msg += f" - {e.response.text[:truncate_length]}"
             raise LlmServiceError(error_msg)
         except (httpx.TimeoutException, httpx.RequestError, httpx.HTTPError) as e:
             raise LlmServiceError(f"Network error: {str(e)}")
     
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=1, max=60),
+        stop=stop_after_attempt(ServiceConstants.LLMClient.MAX_RETRY_ATTEMPTS),
+        wait=wait_exponential(
+            multiplier=ServiceConstants.LLMClient.RETRY_WAIT_MULTIPLIER,
+            min=ServiceConstants.LLMClient.RETRY_WAIT_MIN_SECONDS,
+            max=ServiceConstants.LLMClient.RETRY_WAIT_MAX_SECONDS
+        ),
         retry=retry_if_exception(lambda e: (
             isinstance(e, httpx.TimeoutException) or
             isinstance(e, (httpx.RequestError, httpx.HTTPError)) or
@@ -73,4 +79,5 @@ class OpenAIClient(LLMClient):
         )
         response.raise_for_status()
         data = response.json()
-        return data["choices"][0]["message"]["content"]
+        client_consts = ServiceConstants.LLMClient
+        return data["choices"][client_consts.JSON_RESPONSE_CHOICES_INDEX]["message"]["content"]

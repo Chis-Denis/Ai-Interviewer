@@ -1,6 +1,7 @@
 import json
 from typing import Dict, Any
 from Application.Exceptions import ValidationException
+from Application.Services.service_constants import ServiceConstants
 
 
 class ResponseParser:
@@ -9,19 +10,21 @@ class ResponseParser:
     def parse_summary_response(response_text: str) -> Dict[str, Any]:
         try:
             cleaned_text = response_text.strip()
-            if cleaned_text.startswith("```json"):
-                cleaned_text = cleaned_text[7:]
-            if cleaned_text.startswith("```"):
-                cleaned_text = cleaned_text[3:]
-            if cleaned_text.endswith("```"):
-                cleaned_text = cleaned_text[:-3]
+            parser_consts = ServiceConstants.ResponseParser
+            
+            if cleaned_text.startswith(parser_consts.JSON_CODE_BLOCK_PREFIX):
+                cleaned_text = cleaned_text[parser_consts.JSON_CODE_BLOCK_PREFIX_LENGTH:]
+            if cleaned_text.startswith(parser_consts.CODE_BLOCK_PREFIX):
+                cleaned_text = cleaned_text[parser_consts.CODE_BLOCK_PREFIX_LENGTH:]
+            if cleaned_text.endswith(parser_consts.CODE_BLOCK_PREFIX):
+                cleaned_text = cleaned_text[:-parser_consts.CODE_BLOCK_PREFIX_LENGTH]
             cleaned_text = cleaned_text.strip()
             
             summary_data = json.loads(cleaned_text)
             
             sentiment_score = summary_data.get("sentiment_score")
             if sentiment_score is None:
-                sentiment_score = 0
+                sentiment_score = parser_consts.DEFAULT_SENTIMENT_SCORE
             else:
                 sentiment_score = float(sentiment_score)
             
