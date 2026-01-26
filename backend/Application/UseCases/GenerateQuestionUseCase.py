@@ -57,13 +57,13 @@ class GenerateQuestionUseCase:
         previous_answers = await self.answer_repository.get_by_interview_id(dto.interview_id)
         
         question_data_list = [
-            QuestionData(text=q.text, question_order=q.question_order, question_id=q.question_id)
-            for q in existing_questions
+            QuestionData(text=question.text, question_order=question.question_order, question_id=question.question_id)
+            for question in existing_questions
         ] if existing_questions else None
         
         answer_data_list = [
-            AnswerData(text=a.text, question_id=a.question_id)
-            for a in previous_answers
+            AnswerData(text=answer.text, question_id=answer.question_id)
+            for answer in previous_answers
         ] if previous_answers else None
         
         question_text = await self.llm_orchestrator.generate_question(

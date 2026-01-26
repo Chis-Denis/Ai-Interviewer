@@ -16,7 +16,7 @@ class AnswerMetrics:
         for ending in ScoringConstants.TextProcessing.SENTENCE_ENDINGS[1:]:
             text_processed = text_processed.replace(ending, ScoringConstants.TextProcessing.PERIOD_REPLACEMENT)
         sentences = text_processed.split(ScoringConstants.TextProcessing.PERIOD_REPLACEMENT)
-        return len([s for s in sentences if s.strip()])
+        return len([sentence for sentence in sentences if sentence.strip()])
     
     @staticmethod
     def _contains_keywords(text: str, keywords: List[str]) -> bool:
@@ -70,11 +70,11 @@ class AnswerMetrics:
                 gibberish_indicators += gib.LONG_RANDOM_SEQUENCE_INDICATORS
         
         if len(words) >= 1:
-            avg_word_length = sum(len(w) for w in words) / len(words)
+            avg_word_length = sum(len(word) for word in words) / len(words)
             if avg_word_length > gib.AVG_WORD_LENGTH_THRESHOLD and len(words) < gib.MAX_WORDS_FOR_AVG_CHECK:
                 gibberish_indicators += gib.AVG_WORD_LENGTH_INDICATORS
             
-            very_long_words = sum(1 for w in words if len(w) > gib.VERY_LONG_WORD_LENGTH)
+            very_long_words = sum(1 for word in words if len(word) > gib.VERY_LONG_WORD_LENGTH)
             if very_long_words >= gib.VERY_LONG_WORD_COUNT:
                 gibberish_indicators += gib.VERY_LONG_WORD_INDICATORS
         

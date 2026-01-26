@@ -20,13 +20,13 @@ class PromptBuilder:
         
         if existing_questions:
             context_parts.append("\nPreviously asked questions:")
-            for q in existing_questions:
-                context_parts.append(f"- {q.text}")
+            for question in existing_questions:
+                context_parts.append(f"- {question.text}")
         
         if previous_answers:
             context_parts.append("\nPrevious answers:")
-            for a in previous_answers:
-                context_parts.append(f"- {a.text}")
+            for answer in previous_answers:
+                context_parts.append(f"- {answer.text}")
         
         return "\n".join(context_parts)
     
@@ -39,14 +39,14 @@ class PromptBuilder:
         questions: List[QuestionData],
         answers: List[AnswerData],
     ) -> str:
-        sorted_questions = sorted(questions, key=lambda x: x.question_order)
-        answer_map = {a.question_id: a for a in answers}
+        sorted_questions = sorted(questions, key=lambda question: question.question_order)
+        answer_map = {answer.question_id: answer for answer in answers}
         
         qa_pairs = []
-        for q in sorted_questions:
-            answer = answer_map.get(q.question_id)
+        for question in sorted_questions:
+            answer = answer_map.get(question.question_id)
             if answer:
-                qa_pairs.append(f"Q: {q.text}\nA: {answer.text}")
+                qa_pairs.append(f"Q: {question.text}\nA: {answer.text}")
         
         qa_text = "\n\n".join(qa_pairs)
         
