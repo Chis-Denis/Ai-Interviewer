@@ -9,19 +9,19 @@ from Application.UseCases import (
     DeleteInterviewUseCase,
     UpdateInterviewUseCase,
 )
-from Application.dtos import (
+from Application.DTOs import (
     CreateInterviewDTO,
-    InterviewResponseDTO,
     UpdateInterviewDTO,
 )
+from Presentation.DTOs import InterviewResponseDTO
 from Composition import (
     get_create_interview_use_case,
     get_interview_use_case,
     get_delete_interview_use_case,
     get_update_interview_use_case,
 )
-from Presentation.Mapping import interview_to_response_dto
-from Presentation.Validations.error_schemas import ValidationErrorResponse
+from Presentation.Mappers import interview_to_response_dto
+from Presentation.common import ValidationErrorResponse
 
 router = APIRouter(prefix="/interviews", tags=["interviews"])
 

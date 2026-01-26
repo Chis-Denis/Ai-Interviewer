@@ -1,5 +1,5 @@
 from typing import List, Optional
-from Application.Service.llm_data import QuestionData, AnswerData
+from Application.Services.llm_data import QuestionData, AnswerData
 
 
 class PromptBuilder:

@@ -2,8 +2,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from Presentation.middleware import setup_middleware
-from Presentation.error_handler import (
+from Presentation.common import (
+    setup_middleware,
     validation_exception_handler,
     not_found_exception_handler,
     business_rule_exception_handler,
@@ -13,11 +13,11 @@ from Presentation.error_handler import (
 )
 from Application.Exceptions import NotFoundException, BusinessRuleException, ValidationException, LlmServiceError
 from sqlalchemy.exc import SQLAlchemyError
+from Infrastructure.Database.database import init_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from Infrastructure.Db.database import init_db
     await init_db()
     yield
 
@@ -41,12 +41,12 @@ app.add_exception_handler(LlmServiceError, llm_service_exception_handler)
 
 
 from Presentation.Routers import register_routers
+import uvicorn
 
 register_routers(app)
 
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(
         "main:app",
         host="0.0.0.0",

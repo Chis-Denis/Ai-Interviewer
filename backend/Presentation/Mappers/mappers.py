@@ -1,5 +1,5 @@
 from Domain.Entities import Interview, Question, Answer, InterviewSummary
-from Application.dtos import InterviewResponseDTO, QuestionResponseDTO, AnswerResponseDTO, InterviewSummaryResponseDTO
+from Presentation.DTOs import InterviewResponseDTO, QuestionResponseDTO, AnswerResponseDTO, InterviewSummaryResponseDTO
 
 
 def interview_to_response_dto(interview: Interview) -> InterviewResponseDTO:

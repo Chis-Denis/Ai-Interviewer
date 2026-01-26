@@ -2,7 +2,7 @@ from Domain.Entities import Answer
 from Domain.Enums import InterviewStatus
 
 from Application.RepositoryInterfaces import AnswerRepository, InterviewRepository, QuestionRepository
-from Application.dtos import CreateAnswerDTO
+from Application.DTOs import CreateAnswerDTO
 from Application.Exceptions import (
     InterviewNotFoundException,
     QuestionNotFoundException,

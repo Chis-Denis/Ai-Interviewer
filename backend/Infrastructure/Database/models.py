@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer, Float, DateTime, ForeignKey, Tex
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 import uuid
-from Infrastructure.Db.database import Base
+from Infrastructure.Database.database import Base
 from Domain.Enums import InterviewStatus
 
 

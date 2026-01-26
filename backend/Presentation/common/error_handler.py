@@ -9,7 +9,8 @@ from Application.Exceptions import (
     ValidationException,
     LlmServiceError,
 )
-from Presentation.Validations.error_schemas import ValidationErrorDetail, ValidationErrorResponse
+from .error_schemas import ValidationErrorDetail, ValidationErrorResponse
+from Core.config import settings
 
 
 def format_validation_error(errors: List[Dict[str, Any]]) -> ValidationErrorResponse:
@@ -63,8 +64,6 @@ async def validation_exception_handler_app(request: Request, exc: ValidationExce
 
 
 async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
-    from Core.config import settings
-    
     error_message = "An error occurred while processing your request. Please try again later."
     if settings.DEBUG:
         error_message = str(exc)
@@ -79,8 +78,6 @@ async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> 
 
 
 async def llm_service_exception_handler(request: Request, exc: LlmServiceError) -> JSONResponse:
-    from Core.config import settings
-    
     error_message = "An error occurred while generating content. Please try again later."
     if settings.DEBUG:
         error_message = str(exc)

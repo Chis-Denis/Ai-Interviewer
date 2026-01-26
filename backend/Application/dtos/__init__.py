@@ -1,35 +1,21 @@
-from Application.dtos.InterviewDTO import (
+from .InterviewDTO import (
     CreateInterviewDTO,
-    InterviewResponseDTO,
     UpdateInterviewDTO,
 )
-from Application.dtos.QuestionDTO import (
-    QuestionResponseDTO,
+from .QuestionDTO import (
     GenerateQuestionDTO,
 )
-from Application.dtos.AnswerDTO import (
+from .AnswerDTO import (
     CreateAnswerDTO,
-    AnswerResponseDTO,
 )
-from Application.dtos.InterviewSummaryDTO import (
-    InterviewSummaryResponseDTO,
-)
-from Application.dtos.SummaryResponseDTO import (
-    SummaryResponseDTO,
-)
-from Application.dtos.LlmSummaryResponseDTO import (
+from .LlmSummaryResponseDTO import (
     LlmSummaryResponseDTO,
 )
 
 __all__ = [
     "CreateInterviewDTO",
-    "InterviewResponseDTO",
     "UpdateInterviewDTO",
-    "QuestionResponseDTO",
     "GenerateQuestionDTO",
     "CreateAnswerDTO",
-    "AnswerResponseDTO",
-    "InterviewSummaryResponseDTO",
-    "SummaryResponseDTO",
     "LlmSummaryResponseDTO",
 ]

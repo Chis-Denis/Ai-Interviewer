@@ -1,4 +1,4 @@
-from Infrastructure.Llm.openai_service import OpenAIService
+from .openai_service import OpenAIService
 
 __all__ = [
     "OpenAIService",

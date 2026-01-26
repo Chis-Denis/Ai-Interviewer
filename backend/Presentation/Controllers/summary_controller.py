@@ -3,12 +3,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from Application.UseCases import GenerateSummaryUseCase, GetSummaryUseCase
-from Application.dtos import InterviewSummaryResponseDTO
+from Presentation.DTOs import InterviewSummaryResponseDTO
 from Composition import (
     get_generate_summary_use_case,
     get_summary_use_case,
 )
-from Presentation.Mapping import interview_summary_to_response_dto
+from Presentation.Mappers import interview_summary_to_response_dto
 
 router = APIRouter(prefix="/summaries", tags=["summaries"])
 

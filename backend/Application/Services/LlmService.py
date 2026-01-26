@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any
 from uuid import UUID
 
-from Application.Service.llm_data import QuestionData, AnswerData
+from Application.Services.llm_data import QuestionData, AnswerData
 
 
 class LlmService(ABC):

@@ -2,9 +2,9 @@ from Domain.Entities import Question
 from Domain.Enums import InterviewStatus
 
 from Application.RepositoryInterfaces import QuestionRepository, InterviewRepository, AnswerRepository
-from Application.Service import LlmService
-from Application.Service.llm_data import QuestionData, AnswerData
-from Application.dtos import GenerateQuestionDTO
+from Application.Services import LlmService
+from Application.Services.llm_data import QuestionData, AnswerData
+from Application.DTOs import GenerateQuestionDTO
 from Application.Exceptions import (
     InterviewNotFoundException,
     InterviewAlreadyCompletedException,

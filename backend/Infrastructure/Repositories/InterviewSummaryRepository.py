@@ -7,8 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from Domain.Entities import InterviewSummary
 from Application.RepositoryInterfaces import InterviewSummaryRepository
-from Infrastructure.Db.models import InterviewSummaryModel
-from Infrastructure.Db.mappers import (
+from Infrastructure.Database.models import InterviewSummaryModel
+from Infrastructure.Database.mappers import (
     interview_summary_model_to_entity,
     interview_summary_entity_to_model,
 )

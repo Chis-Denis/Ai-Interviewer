@@ -9,9 +9,9 @@ from Application.RepositoryInterfaces import (
     InterviewSummaryRepository,
     QuestionRepository,
 )
-from Application.Service import LlmService
-from Application.Service.llm_data import QuestionData, AnswerData
-from Application.dtos import LlmSummaryResponseDTO
+from Application.Services import LlmService
+from Application.Services.llm_data import QuestionData, AnswerData
+from Application.DTOs import LlmSummaryResponseDTO
 from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException, ValidationException
 from Application.Analysis.AnswerEvaluator import AnswerEvaluator
 from Application.Analysis.scoring import ScoringCalculator
