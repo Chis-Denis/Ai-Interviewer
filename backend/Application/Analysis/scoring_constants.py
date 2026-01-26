@@ -73,7 +73,9 @@ class ScoringConstants:
         COEFFICIENT_VARIATION_LOW = 0.8
     
     class OverallUsefulness:
-        SCORE_DIVISOR = 3.0
+        CLARITY_WEIGHT = 0.4
+        CONFIDENCE_WEIGHT = 0.4
+        CONSISTENCY_WEIGHT = 0.2
     
     class GibberishDetection:
         MIN_TEXT_LENGTH = 10

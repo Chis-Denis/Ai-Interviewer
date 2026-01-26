@@ -57,7 +57,12 @@ class ScoringCalculator:
         confidence_score: float,
         consistency_score: float,
     ) -> float:
-        base_score = (clarity_score + confidence_score + consistency_score) / ScoringConstants.OverallUsefulness.SCORE_DIVISOR
+        weights = ScoringConstants.OverallUsefulness
+        base_score = (
+            clarity_score * weights.CLARITY_WEIGHT +
+            confidence_score * weights.CONFIDENCE_WEIGHT +
+            consistency_score * weights.CONSISTENCY_WEIGHT
+        )
         
         return round(min(base_score, ScoringConstants.MAX_SCORE), ScoringConstants.SCORE_PRECISION)
     

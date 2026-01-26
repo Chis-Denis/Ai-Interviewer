@@ -51,7 +51,7 @@
         </div>
         <div class="score-card highlight">
           <div class="score-header">
-            <div class="score-label">Overall Usefulness</div>
+            <div class="score-label">Final Grade</div>
             <button class="info-button" @click="toggleExplanation('usefulness')">
               ℹ
             </button>
@@ -235,8 +235,9 @@ const explanations = {
       <p><strong>What it measures:</strong> Overall quality and usefulness of your interview responses.</p>
       <p><strong>How it's calculated:</strong></p>
       <ul>
-        <li>Average of Clarity, Confidence, and Consistency scores</li>
-        <li>Formula: (Clarity + Confidence + Consistency) ÷ 3</li>
+        <li>Weighted average of Clarity, Confidence, and Consistency scores</li>
+        <li>Formula: (Clarity × 40%) + (Confidence × 40%) + (Consistency × 20%)</li>
+        <li>Clarity and Confidence each contribute 40%, Consistency contributes 20%</li>
         <li>Provides a balanced view of your overall performance</li>
       </ul>
     `,
