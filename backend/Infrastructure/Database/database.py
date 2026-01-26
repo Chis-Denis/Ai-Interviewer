@@ -4,9 +4,10 @@ from sqlalchemy.orm import declarative_base
 from Core.config import settings
 
 def get_async_database_url() -> str:
-    if settings.DATABASE_URL.startswith("sqlite:///"):
-        return settings.DATABASE_URL.replace("sqlite:///", "sqlite+aiosqlite:///")
-    return settings.DATABASE_URL
+    db_url = settings.DATABASE_URL or "sqlite:///./Infrastructure/Database/ai_interviewer.db"
+    if db_url.startswith("sqlite:///"):
+        return db_url.replace("sqlite:///", "sqlite+aiosqlite:///")
+    return db_url
 
 engine = create_async_engine(
     get_async_database_url(),
@@ -34,7 +35,8 @@ async def get_db():
 
 
 async def init_db():
-    db_path = Path(settings.DATABASE_URL.replace("sqlite:///", ""))
+    db_url = settings.DATABASE_URL or "sqlite:///./Infrastructure/Database/ai_interviewer.db"
+    db_path = Path(db_url.replace("sqlite:///", ""))
     db_dir = db_path.parent
     if db_dir and not db_dir.exists():
         db_dir.mkdir(parents=True, exist_ok=True)

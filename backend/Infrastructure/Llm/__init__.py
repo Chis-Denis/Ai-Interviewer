@@ -1,5 +1,5 @@
-from .openai_service import OpenAIService
+from .OpenAIClient import OpenAIClient
 
 __all__ = [
-    "OpenAIService",
+    "OpenAIClient",
 ]
