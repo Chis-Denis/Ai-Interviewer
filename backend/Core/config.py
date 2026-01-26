@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     
     DEBUG: bool = False
     MAX_QUESTIONS_PER_INTERVIEW: int = 5
+    PROMPT_VERSION: str = "v1"
+    PROMPT_TEMPLATES_PATH: str = ""
 
 
 settings = Settings()

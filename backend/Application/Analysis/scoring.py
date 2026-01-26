@@ -11,11 +11,26 @@ class ScoringCalculator:
         if len(answers) < 2:
             return 0.0
         
+        manipulation_count = sum(1 for a in answers if AnswerMetrics.detect_manipulation_attempts(a.text))
+        gibberish_count = sum(1 for a in answers if AnswerMetrics.detect_gibberish(a.text))
+        
+        if manipulation_count > 0 or gibberish_count > 0:
+            bad_answer_ratio = (manipulation_count + gibberish_count) / len(answers)
+            if bad_answer_ratio >= 0.5:
+                return 0.0
+            else:
+                return 0.1
+        
         word_counts = [AnswerMetrics.calculate_word_count(a.text) for a in answers]
         avg_length = sum(word_counts) / len(word_counts)
         
         if avg_length == 0:
             return 0.0
+        
+        if avg_length < 5:
+            return 0.05
+        elif avg_length < 10:
+            return 0.15
         
         mean = avg_length
         raw_variance = sum((x - mean) ** 2 for x in word_counts) / len(word_counts)

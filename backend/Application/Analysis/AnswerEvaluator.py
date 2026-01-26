@@ -7,23 +7,29 @@ class AnswerEvaluator:
     
     @staticmethod
     def calculate_clarity_score(text: str) -> float:
+        if AnswerMetrics.detect_manipulation_attempts(text):
+            return 0.0
+        
+        if AnswerMetrics.detect_gibberish(text):
+            return 0.0
+        
         word_count = AnswerMetrics.calculate_word_count(text)
         sentence_count = AnswerMetrics.calculate_sentence_count(text)
         has_structure = AnswerMetrics.has_structure_indicators(text)
         
         if word_count < 5:
-            return 0.05
+            return 0.02
         elif word_count < 10:
-            return 0.15
+            return 0.08
         elif word_count < 15:
-            return 0.35
+            return 0.20
         
-        score = 0.65
+        score = 0.50
         
         if sentence_count >= 2:
-            score += 0.15
+            score += 0.20
         if sentence_count >= 3:
-            score += 0.05
+            score += 0.10
         
         if has_structure:
             score += 0.15
@@ -36,30 +42,45 @@ class AnswerEvaluator:
     
     @staticmethod
     def calculate_confidence_score(text: str) -> float:
+        if AnswerMetrics.detect_manipulation_attempts(text):
+            return 0.0
+        
+        if AnswerMetrics.detect_gibberish(text):
+            return 0.0
+        
         word_count = AnswerMetrics.calculate_word_count(text)
         completeness = AnswerMetrics.calculate_completeness_score(text)
         has_examples = AnswerMetrics.has_examples(text)
         has_metrics = AnswerMetrics.has_metrics_or_numbers(text)
+        is_non_technical = AnswerMetrics.detect_non_technical_content(text)
         
-        if word_count < 10:
-            return 0.1
+        if word_count < 5:
+            return 0.0
+        elif word_count < 10:
+            return 0.05
         elif word_count < 15:
-            return 0.25
+            return 0.12
         
-        score = completeness * 0.6
+        if is_non_technical and word_count < 20:
+            completeness = completeness * 0.3
+        
+        score = completeness * 0.5
         
         if word_count >= 40:
-            score += 0.2
+            score += 0.25
         elif word_count >= 25:
             score += 0.15
         elif word_count >= 15:
             score += 0.05
         
         if has_examples:
-            score += 0.15
+            score += 0.20
         
         if has_metrics:
             score += 0.15
+        
+        if is_non_technical:
+            score = score * 0.4
         
         return min(score, 1.0)
     
