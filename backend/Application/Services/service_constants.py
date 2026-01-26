@@ -1,0 +1,17 @@
+class ServiceConstants:
+    
+    class ResponseParser:
+        JSON_CODE_BLOCK_PREFIX = "```json"
+        JSON_CODE_BLOCK_PREFIX_LENGTH = 7
+        CODE_BLOCK_PREFIX = "```"
+        CODE_BLOCK_PREFIX_LENGTH = 3
+        DEFAULT_SENTIMENT_SCORE = 0
+    
+    class LLMClient:
+        DEFAULT_TIMEOUT_SECONDS = 30.0
+        MAX_RETRY_ATTEMPTS = 3
+        RETRY_WAIT_MULTIPLIER = 1
+        RETRY_WAIT_MIN_SECONDS = 1
+        RETRY_WAIT_MAX_SECONDS = 60
+        ERROR_TEXT_TRUNCATE_LENGTH = 200
+        JSON_RESPONSE_CHOICES_INDEX = 0

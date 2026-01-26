@@ -51,7 +51,7 @@
         </div>
         <div class="score-card highlight">
           <div class="score-header">
-            <div class="score-label">Overall Usefulness</div>
+            <div class="score-label">Final Grade</div>
             <button class="info-button" @click="toggleExplanation('usefulness')">
               ℹ
             </button>
@@ -186,11 +186,12 @@ const explanations = {
       <p><strong>What it measures:</strong> How clear and well-structured your answers are.</p>
       <p><strong>How it's calculated:</strong></p>
       <ul>
-        <li>Base score starts at 65% for answers with 15+ words</li>
-        <li>+15% for 2+ sentences, +5% for 3+ sentences</li>
+        <li><strong>Automatic 0%:</strong> Manipulation attempts (asking for help, emotional manipulation) or gibberish/random text</li>
+        <li>Base score starts at 50% for answers with 15+ words</li>
+        <li>+20% for 2+ sentences, +10% for 3+ sentences</li>
         <li>+15% for structure indicators (because, since, first, second, etc.)</li>
         <li>+5% for reasonable sentence length (8-30 words per sentence)</li>
-        <li>Penalties: &lt;5 words = 5%, &lt;10 words = 15%, &lt;15 words = 35%</li>
+        <li><strong>Harsh penalties:</strong> &lt;5 words = 2%, &lt;10 words = 8%, &lt;15 words = 20%</li>
       </ul>
     `,
   },
@@ -200,12 +201,13 @@ const explanations = {
       <p><strong>What it measures:</strong> How complete and detailed your answers are, showing depth of knowledge.</p>
       <p><strong>How it's calculated:</strong></p>
       <ul>
-        <li>Base score = Completeness × 60%</li>
-        <li>Completeness: 50+ words = 100%, 30+ = 80%, 20+ = 60%, 15+ = 40%</li>
-        <li>+20% for 40+ words, +15% for 25+ words, +5% for 15+ words</li>
-        <li>+15% for including examples</li>
+        <li><strong>Automatic 0%:</strong> Manipulation attempts or gibberish/random text</li>
+        <li>Base score = Completeness × 50%</li>
+        <li>Completeness: 50+ words = 100%, 30+ = 80%, 20+ = 60%, 15+ = 40%, 10+ = 25%, &lt;10 = 5%</li>
+        <li>+25% for 40+ words, +15% for 25+ words, +5% for 15+ words</li>
+        <li>+20% for including examples</li>
         <li>+15% for including metrics/numbers</li>
-        <li>Penalties: &lt;10 words = 10%, &lt;15 words = 25%</li>
+        <li><strong>Penalties:</strong> Non-technical content reduces score by 60%, &lt;5 words = 0%, &lt;10 words = 5%, &lt;15 words = 12%</li>
       </ul>
     `,
   },
@@ -215,6 +217,8 @@ const explanations = {
       <p><strong>What it measures:</strong> How consistent your answer lengths are across all questions.</p>
       <p><strong>How it's calculated:</strong></p>
       <ul>
+        <li><strong>Automatic 0%:</strong> If 50%+ of answers contain manipulation or gibberish</li>
+        <li><strong>Harsh penalties:</strong> Average length &lt;5 words = 5%, &lt;10 words = 15%</li>
         <li>Measures the variation in word count across all your answers</li>
         <li>Uses coefficient of variation (standard deviation / average length)</li>
         <li>&lt;20% variation = 100% (very consistent)</li>
@@ -231,8 +235,9 @@ const explanations = {
       <p><strong>What it measures:</strong> Overall quality and usefulness of your interview responses.</p>
       <p><strong>How it's calculated:</strong></p>
       <ul>
-        <li>Average of Clarity, Confidence, and Consistency scores</li>
-        <li>Formula: (Clarity + Confidence + Consistency) ÷ 3</li>
+        <li>Weighted average of Clarity, Confidence, and Consistency scores</li>
+        <li>Formula: (Clarity × 40%) + (Confidence × 40%) + (Consistency × 20%)</li>
+        <li>Clarity and Confidence each contribute 40%, Consistency contributes 20%</li>
         <li>Provides a balanced view of your overall performance</li>
       </ul>
     `,
