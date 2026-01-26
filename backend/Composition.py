@@ -2,7 +2,8 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from Application.RepositoryInterfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
-from Application.Services import LlmService
+from Application.Services.LLMOrchestrator import LLMOrchestrator
+from Application.Services.LLMClient import LLMClient
 from Application.UseCases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
@@ -17,7 +18,7 @@ from Application.UseCases import (
 )
 from Core.config import Settings, settings
 from Infrastructure.Database.database import get_db
-from Infrastructure.LLM import OpenAIService
+from Infrastructure.LLM import OpenAIClient
 from Infrastructure.Repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
 
 
@@ -41,8 +42,14 @@ def get_settings():
     return settings
 
 
-def get_llm_service(settings: Settings = Depends(get_settings)) -> LlmService:
-    return OpenAIService(settings)
+def get_llm_client(settings: Settings = Depends(get_settings)) -> LLMClient:
+    return OpenAIClient(settings)
+
+
+def get_llm_orchestrator(
+    llm_client: LLMClient = Depends(get_llm_client)
+) -> LLMOrchestrator:
+    return LLMOrchestrator(llm_client)
 
 
 def get_create_interview_use_case(
@@ -73,14 +80,14 @@ def get_generate_question_use_case(
     question_repository: QuestionRepository = Depends(get_question_repository),
     interview_repository: InterviewRepository = Depends(get_interview_repository),
     answer_repository: AnswerRepository = Depends(get_answer_repository),
-    llm_service: LlmService = Depends(get_llm_service),
+    llm_orchestrator: LLMOrchestrator = Depends(get_llm_orchestrator),
     settings: Settings = Depends(get_settings),
 ) -> GenerateQuestionUseCase:
     return GenerateQuestionUseCase(
         question_repository,
         interview_repository,
         answer_repository,
-        llm_service,
+        llm_orchestrator,
         settings.MAX_QUESTIONS_PER_INTERVIEW,
     )
 
@@ -110,9 +117,9 @@ def get_generate_summary_use_case(
     answer_repository: AnswerRepository = Depends(get_answer_repository),
     summary_repository: InterviewSummaryRepository = Depends(get_summary_repository),
     question_repository: QuestionRepository = Depends(get_question_repository),
-    llm_service: LlmService = Depends(get_llm_service),
+    llm_orchestrator: LLMOrchestrator = Depends(get_llm_orchestrator),
 ) -> GenerateSummaryUseCase:
-    return GenerateSummaryUseCase(interview_repository, answer_repository, summary_repository, question_repository, llm_service)
+    return GenerateSummaryUseCase(interview_repository, answer_repository, summary_repository, question_repository, llm_orchestrator)
 
 
 def get_summary_use_case(

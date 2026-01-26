@@ -1,6 +1,3 @@
-from typing import List, Optional, Dict, Any
-from uuid import UUID
-
 import httpx
 from tenacity import (
     retry,
@@ -9,67 +6,27 @@ from tenacity import (
     retry_if_exception,
 )
 
-from Application.Services import LlmService
-from Application.Services.llm_data import QuestionData, AnswerData
+from Application.Services.LLMClient import LLMClient
 from Application.Exceptions import LlmServiceError
-from Infrastructure.LLM.prompt_builder import PromptBuilder
-from Infrastructure.LLM.response_parser import ResponseParser
+from Core.config import Settings
 
 
-class OpenAIService(LlmService):
+class OpenAIClient(LLMClient):
     
-    def __init__(self, settings: "Settings"):
+    def __init__(self, settings: Settings):
         self.settings = settings
         self.api_key = settings.LLM_API_KEY.strip() if settings.LLM_API_KEY else ""
-        self.base_url = "https://api.openai.com/v1"
+        self.base_url = settings.LLM_BASE_URL
         self.timeout = 30.0
         self.client = httpx.AsyncClient(timeout=self.timeout)
     
-    async def generate_question(
-        self,
-        topic: str,
-        interview_id: UUID,
-        existing_questions: Optional[List[QuestionData]] = None,
-        previous_answers: Optional[List[AnswerData]] = None,
-    ) -> str:
+    async def call(self, prompt: str) -> str:
         if not self.api_key:
             raise LlmServiceError("LLM API key not configured")
-        
-        context = PromptBuilder.build_question_context(topic, existing_questions, previous_answers)
-        prompt = PromptBuilder.build_question_prompt(context)
         
         try:
             response = await self._call_openai_api(prompt)
-            return response.strip()
-        except httpx.HTTPStatusError as e:
-            status_code = e.response.status_code
-            error_msg = f"OpenAI API error: {status_code}"
-            if e.response.text:
-                try:
-                    error_data = e.response.json()
-                    error_msg += f" - {error_data.get('error', {}).get('message', e.response.text)}"
-                except (ValueError, KeyError):
-                    error_msg += f" - {e.response.text[:200]}"
-            raise LlmServiceError(error_msg)
-        except (httpx.TimeoutException, httpx.RequestError, httpx.HTTPError) as e:
-            raise LlmServiceError(f"Network error: {str(e)}")
-    
-    async def generate_summary(
-        self,
-        interview_topic: str,
-        answers: List[AnswerData],
-        questions: List[QuestionData],
-    ) -> Dict[str, Any]:
-        if not self.api_key:
-            raise LlmServiceError("LLM API key not configured")
-        
-        if not answers:
-            raise LlmServiceError("Cannot generate summary without answers")
-        
-        prompt = PromptBuilder.build_summary_prompt(interview_topic, questions, answers)
-        try:
-            response_text = await self._call_openai_api(prompt)
-            return ResponseParser.parse_summary_response(response_text)
+            return response
         except httpx.HTTPStatusError as e:
             status_code = e.response.status_code
             error_msg = f"OpenAI API error: {status_code}"
@@ -102,7 +59,7 @@ class OpenAIService(LlmService):
         payload = {
             "model": self.settings.LLM_MODEL,
             "messages": [
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": self.settings.LLM_SYSTEM_PROMPT},
                 {"role": "user", "content": prompt}
             ],
             "temperature": self.settings.LLM_TEMPERATURE,

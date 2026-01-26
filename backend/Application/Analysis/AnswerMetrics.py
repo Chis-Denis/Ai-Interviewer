@@ -37,13 +37,6 @@ class AnswerMetrics:
         return len(numbers) > 0 or AnswerMetrics._contains_keywords(text, metric_keywords)
     
     @staticmethod
-    def calculate_average_length(answers: List[AnswerData]) -> float:
-        if not answers:
-            return 0.0
-        total_words = sum(AnswerMetrics.calculate_word_count(a.text) for a in answers)
-        return total_words / len(answers)
-    
-    @staticmethod
     def calculate_completeness_score(text: str) -> float:
         word_count = AnswerMetrics.calculate_word_count(text)
         return min(1.0, word_count / 100.0)

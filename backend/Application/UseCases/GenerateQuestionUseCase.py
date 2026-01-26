@@ -2,7 +2,7 @@ from Domain.Entities import Question
 from Domain.Enums import InterviewStatus
 
 from Application.RepositoryInterfaces import QuestionRepository, InterviewRepository, AnswerRepository
-from Application.Services import LlmService
+from Application.Services.LLMOrchestrator import LLMOrchestrator
 from Application.Services.llm_data import QuestionData, AnswerData
 from Application.DTOs import GenerateQuestionDTO
 from Application.Exceptions import (
@@ -20,13 +20,13 @@ class GenerateQuestionUseCase:
         question_repository: QuestionRepository,
         interview_repository: InterviewRepository,
         answer_repository: AnswerRepository,
-        llm_service: LlmService,
+        llm_orchestrator: LLMOrchestrator,
         max_questions_per_interview: int,
     ):
         self.question_repository = question_repository
         self.interview_repository = interview_repository
         self.answer_repository = answer_repository
-        self.llm_service = llm_service
+        self.llm_orchestrator = llm_orchestrator
         self.max_questions_per_interview = max_questions_per_interview
     
     async def execute(self, dto: GenerateQuestionDTO) -> Question:
@@ -66,7 +66,7 @@ class GenerateQuestionUseCase:
             for a in previous_answers
         ] if previous_answers else None
         
-        question_text = await self.llm_service.generate_question(
+        question_text = await self.llm_orchestrator.generate_question(
             topic=interview.topic,
             interview_id=dto.interview_id,
             existing_questions=question_data_list,

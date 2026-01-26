@@ -9,7 +9,7 @@ from Application.RepositoryInterfaces import (
     InterviewSummaryRepository,
     QuestionRepository,
 )
-from Application.Services import LlmService
+from Application.Services.LLMOrchestrator import LLMOrchestrator
 from Application.Services.llm_data import QuestionData, AnswerData
 from Application.DTOs import LlmSummaryResponseDTO
 from Application.Exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException, ValidationException
@@ -25,13 +25,13 @@ class GenerateSummaryUseCase:
         answer_repository: AnswerRepository,
         summary_repository: InterviewSummaryRepository,
         question_repository: QuestionRepository,
-        llm_service: LlmService,
+        llm_orchestrator: LLMOrchestrator,
     ):
         self.interview_repository = interview_repository
         self.answer_repository = answer_repository
         self.summary_repository = summary_repository
         self.question_repository = question_repository
-        self.llm_service = llm_service
+        self.llm_orchestrator = llm_orchestrator
     
     async def execute(self, interview_id: UUID) -> InterviewSummary:
         interview = await self.interview_repository.get_by_id(interview_id)
@@ -54,7 +54,7 @@ class GenerateSummaryUseCase:
             for a in answers
         ]
         
-        llm_summary_dict = await self.llm_service.generate_summary(
+        llm_summary_dict = await self.llm_orchestrator.generate_summary(
             interview_topic=interview.topic,
             answers=answer_data_list,
             questions=question_data_list,

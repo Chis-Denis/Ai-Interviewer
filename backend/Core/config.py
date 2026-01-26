@@ -18,13 +18,15 @@ class Settings(BaseSettings):
     PORT: int = 8000
     API_V1_PREFIX: str = "/api/v1"
     
-    DATABASE_URL: str = ""
+    DATABASE_URL: str = "sqlite:///./Infrastructure/Database/ai_interviewer.db"
     DATABASE_ECHO: bool = False
     
     CORS_ORIGINS: List[str] = []
     
     LLM_API_KEY: str = ""
     LLM_PROVIDER: str = "openai"
+    LLM_BASE_URL: str = "https://api.openai.com/v1"
+    LLM_SYSTEM_PROMPT: str = "You are a helpful assistant."
     LLM_MODEL: str = ""
     LLM_TEMPERATURE: float = 0.7
     LLM_MAX_TOKENS: int = 2000
