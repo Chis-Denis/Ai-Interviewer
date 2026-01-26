@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from Application.RepositoryInterfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
-from Application.Service import LlmService
+from Application.Services import LlmService
 from Application.UseCases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
@@ -16,8 +16,8 @@ from Application.UseCases import (
     GetSummaryUseCase,
 )
 from Core.config import Settings, settings
-from Infrastructure.Db.database import get_db
-from Infrastructure.Llm import OpenAIService
+from Infrastructure.Database.database import get_db
+from Infrastructure.LLM import OpenAIService
 from Infrastructure.Repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
 
 

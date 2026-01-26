@@ -7,8 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from Domain.Entities import Answer
 from Application.RepositoryInterfaces import AnswerRepository
-from Infrastructure.Db.models import AnswerModel
-from Infrastructure.Db.mappers import (
+from Infrastructure.Database.models import AnswerModel
+from Infrastructure.Database.mappers import (
     answer_model_to_entity,
     answer_entity_to_model,
 )

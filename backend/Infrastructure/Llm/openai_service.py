@@ -9,11 +9,11 @@ from tenacity import (
     retry_if_exception,
 )
 
-from Application.Service import LlmService
-from Application.Service.llm_data import QuestionData, AnswerData
+from Application.Services import LlmService
+from Application.Services.llm_data import QuestionData, AnswerData
 from Application.Exceptions import LlmServiceError
-from Infrastructure.Llm.prompt_builder import PromptBuilder
-from Infrastructure.Llm.response_parser import ResponseParser
+from Infrastructure.LLM.prompt_builder import PromptBuilder
+from Infrastructure.LLM.response_parser import ResponseParser
 
 
 class OpenAIService(LlmService):

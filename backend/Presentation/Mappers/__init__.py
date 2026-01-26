@@ -1,4 +1,4 @@
-from Presentation.Mapping.mappers import (
+from Presentation.Mappers.mappers import (
     interview_to_response_dto,
     question_to_response_dto,
     answer_to_response_dto,

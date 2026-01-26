@@ -4,13 +4,14 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from Application.UseCases import SubmitAnswerUseCase, GetAnswerUseCase
-from Application.dtos import CreateAnswerDTO, AnswerResponseDTO
+from Application.DTOs import CreateAnswerDTO
+from Presentation.DTOs import AnswerResponseDTO
 from Composition import (
     get_submit_answer_use_case,
     get_answer_use_case,
 )
-from Presentation.Mapping import answer_to_response_dto
-from Presentation.Validations.error_schemas import ValidationErrorResponse
+from Presentation.Mappers import answer_to_response_dto
+from Presentation.common import ValidationErrorResponse
 
 router = APIRouter(prefix="/answers", tags=["answers"])
 

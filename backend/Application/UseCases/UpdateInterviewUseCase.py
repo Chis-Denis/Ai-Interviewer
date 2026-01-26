@@ -4,7 +4,7 @@ from Domain.Entities import Interview
 from Domain.Enums import InterviewStatus
 
 from Application.RepositoryInterfaces import InterviewRepository
-from Application.dtos import UpdateInterviewDTO
+from Application.DTOs import UpdateInterviewDTO
 from Application.Exceptions import (
     InterviewNotFoundException,
     InterviewAlreadyCompletedException,

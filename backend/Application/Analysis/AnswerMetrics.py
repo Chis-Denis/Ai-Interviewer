@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from Application.Service.llm_data import AnswerData
+from Application.Services.llm_data import AnswerData
 
 
 class AnswerMetrics:

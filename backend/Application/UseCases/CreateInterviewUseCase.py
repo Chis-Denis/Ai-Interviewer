@@ -1,7 +1,7 @@
 from Domain.Entities import Interview
 
 from Application.RepositoryInterfaces import InterviewRepository
-from Application.dtos import CreateInterviewDTO
+from Application.DTOs import CreateInterviewDTO
 
 
 class CreateInterviewUseCase:
