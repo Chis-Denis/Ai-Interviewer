@@ -1,7 +1,13 @@
 from contextlib import asynccontextmanager
+import uvicorn
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import SQLAlchemyError
+
+from Application.Exceptions import NotFoundException, BusinessRuleException, ValidationException, LlmServiceError
+from Infrastructure.Database.database import init_db
+from Presentation.Routers import register_routers
 from Presentation.common import (
     setup_middleware,
     validation_exception_handler,
@@ -11,9 +17,6 @@ from Presentation.common import (
     database_exception_handler,
     llm_service_exception_handler,
 )
-from Application.Exceptions import NotFoundException, BusinessRuleException, ValidationException, LlmServiceError
-from sqlalchemy.exc import SQLAlchemyError
-from Infrastructure.Database.database import init_db
 
 
 @asynccontextmanager
@@ -38,10 +41,6 @@ app.add_exception_handler(BusinessRuleException, business_rule_exception_handler
 app.add_exception_handler(ValidationException, validation_exception_handler_app)
 app.add_exception_handler(SQLAlchemyError, database_exception_handler)
 app.add_exception_handler(LlmServiceError, llm_service_exception_handler)
-
-
-from Presentation.Routers import register_routers
-import uvicorn
 
 register_routers(app)
 

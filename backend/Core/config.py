@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     PORT: int = 8000
     API_V1_PREFIX: str = "/api/v1"
     
-    DATABASE_URL: str = "sqlite:///./Infrastructure/Database/ai_interviewer.db"
+    DATABASE_URL: str = ""
     DATABASE_ECHO: bool = False
     
     CORS_ORIGINS: List[str] = []
