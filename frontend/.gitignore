@@ -2,22 +2,32 @@
 node_modules/
 /.pnp
 .pnp.js
+.pnp.*
 
 # Testing
 /coverage
+*.lcov
+.nyc_output
 __screenshots__/
+test-results/
+playwright-report/
+playwright/.cache/
 
-# Production
+# Production / Build
 /dist
+/dist-ssr
 /build
-dist-ssr
+*.local
 
-# Misc
-.DS_Store
+# Environment variables
+.env
+.env.*
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 
 # Logs
 logs
@@ -27,34 +37,55 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 .idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.loadpath
+.externalToolBuilders/
 
-# Environment variables
-.env
-.env.local
-.env.*.local
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
 # Vite
 .vite/
 vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
 
 # TypeScript
 *.tsbuildinfo
+*.d.ts.map
 
 # Optional npm cache directory
 .npm
 
 # Optional eslint cache
 .eslintcache
+.eslintcache.*
 
 # Optional stylelint cache
 .stylelintcache
@@ -71,8 +102,19 @@ vite.config.js.timestamp-*
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 .yarn-integrity
+.yarn/cache
+.yarn/install-state.gz
+
+# pnpm
+.pnpm-store/
+.pnpm-debug.log*
 
 # parcel-bundler cache
 .cache
@@ -84,23 +126,59 @@ out
 
 # Nuxt.js
 .nuxt
+.output
 
 # Storybook build outputs
 .out
 .storybook-out
+storybook-static
 
 # Temporary folders
 tmp/
 temp/
+*.tmp
+*.temp
 
 # Cypress
 /cypress/videos/
 /cypress/screenshots/
+/cypress/downloads/
+cypress.env.json
 
 # Vitest
 __screenshots__/
+coverage/
+.vitest/
 
 # Playwright
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# Vue
+*.vue.js
+*.vue.d.ts
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local development
+.local
+*.local
+
+# Lock files (uncomment if you don't want to commit lock files)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Misc
+*.bak
+*.swp
+*.swo
+*~
+.cache
+.temp
