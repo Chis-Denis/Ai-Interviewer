@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings
 
 
 def load_yaml_config() -> Dict[str, Any]:
-    config_path = Path(__file__).parent.parent / "config" / "default.yaml"
+    config_path = Path(__file__).parent / "default.yaml"
     if config_path.exists():
         with open(config_path, "r") as f:
             return yaml.safe_load(f) or {}
@@ -25,7 +25,7 @@ class Settings(BaseSettings):
         extra="ignore"
     )
     
-    CORS_ORIGINS: List[str] = []
+    CORS_ORIGINS: List[str] = _yaml_config.get("cors", {}).get("origins", [])
     
     LLM_API_KEY: str = ""
     LLM_BASE_URL: str = _yaml_config.get("llm", {}).get("base_url", "https://api.openai.com/v1")

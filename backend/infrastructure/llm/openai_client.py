@@ -9,7 +9,7 @@ from tenacity import (
 from application.services.llm_client import LLMClient
 from application.exceptions import LlmServiceError
 from application.services.service_constants import ServiceConstants
-from core.config import Settings
+from config.config import Settings
 
 
 class OpenAIClient(LLMClient):

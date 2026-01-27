@@ -1,18 +1,17 @@
 from pathlib import Path
 from typing import Optional
-from core.config import settings
 
 
 class PromptLoader:
     
-    def __init__(self, prompts_path: Optional[str] = None, version: Optional[str] = None):
+    def __init__(self, prompts_path: Optional[str] = None, version: str = "v1"):
         backend_dir = Path(__file__).parent.parent.parent.resolve()
         if prompts_path and prompts_path.strip():
             path_obj = Path(prompts_path)
             self.prompts_dir = path_obj if path_obj.is_absolute() else backend_dir / prompts_path
         else:
             self.prompts_dir = backend_dir / "application" / "services" / "prompts"
-        self.version = version or getattr(settings, 'PROMPT_VERSION', 'v1')
+        self.version = version
     
     def load_template(self, template_name: str, version: Optional[str] = None) -> str:
         version = version or self.version

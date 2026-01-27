@@ -13,11 +13,11 @@ class LLMOrchestrator:
     def __init__(
         self,
         llm_client: LLMClient,
-        prompt_builder: Optional[PromptBuilder] = None,
+        prompt_builder: PromptBuilder,
         response_parser: Optional[ResponseParser] = None,
     ):
         self.llm_client = llm_client
-        self.prompt_builder = prompt_builder or PromptBuilder()
+        self.prompt_builder = prompt_builder
         self.response_parser = response_parser or ResponseParser()
     
     async def generate_question(
