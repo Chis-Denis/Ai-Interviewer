@@ -1,5 +1,5 @@
-from Domain.Entities import Interview, Question, Answer, InterviewSummary
-from Domain.Enums import InterviewStatus
+from domain.entities import Interview, Question, Answer, InterviewSummary
+from domain.enums import InterviewStatus, SentimentLabel
 
 __all__ = [
     "Interview",
@@ -7,4 +7,5 @@ __all__ = [
     "Answer",
     "InterviewSummary",
     "InterviewStatus",
+    "SentimentLabel",
 ]

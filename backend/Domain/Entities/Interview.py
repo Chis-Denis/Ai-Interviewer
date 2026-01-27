@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional, List
 from uuid import UUID, uuid4
-from Domain.Enums import InterviewStatus
+from domain.enums import InterviewStatus
 
 
 class Interview:
@@ -32,10 +32,6 @@ class Interview:
             self.status = InterviewStatus.COMPLETED
             self.completed_at = datetime.now(timezone.utc)
             self.updated_at = datetime.now(timezone.utc)
-    
-    def cancel(self) -> None:
-        self.status = InterviewStatus.CANCELLED
-        self.updated_at = datetime.now(timezone.utc)
     
     def touch(self) -> None:
         self.updated_at = datetime.now(timezone.utc)

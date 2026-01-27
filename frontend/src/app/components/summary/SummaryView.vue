@@ -75,13 +75,13 @@
           ℹ
         </button>
       </div>
-      <div class="sentiment-display">
+        <div class="sentiment-display">
         <span class="sentiment-label">{{ summary.sentiment_label || 'Neutral' }}</span>
         <div class="sentiment-bar">
           <div
             class="sentiment-fill"
             :class="getSentimentClass(summary.sentiment_score)"
-            :style="{ width: `${Math.abs(summary.sentiment_score || 0) * 100}%` }"
+            :style="{ width: `${(summary.sentiment_score || 0) * 100}%` }"
           ></div>
         </div>
         <span class="sentiment-score">{{ formatScore(summary.sentiment_score) }}</span>
@@ -245,15 +245,15 @@ const explanations = {
   sentiment: {
     title: 'Sentiment Analysis',
     content: `
-      <p><strong>What it measures:</strong> The emotional tone and sentiment of your answers.</p>
+      <p><strong>What it measures:</strong> The overall quality and tone of your interview responses.</p>
       <p><strong>How it's calculated:</strong></p>
       <ul>
         <li>Analyzed by AI using natural language processing</li>
-        <li>Score ranges from -1.0 (very negative) to +1.0 (very positive)</li>
-        <li>&gt;0.3 = Positive sentiment</li>
-        <li>-0.3 to 0.3 = Neutral sentiment</li>
-        <li>&lt;-0.3 = Negative sentiment</li>
-        <li>Based on word choice, phrasing, and overall tone</li>
+        <li>Score ranges from 0% (negative) to 100% (positive)</li>
+        <li>&gt;60% = Positive (clear, confident, experienced answers)</li>
+        <li>40-60% = Neutral (basic understanding, acceptable)</li>
+        <li>&lt;40% = Negative (unclear, shallow, or incorrect)</li>
+        <li>Based on answer clarity, depth, and demonstrated knowledge</li>
       </ul>
     `,
   },
@@ -282,8 +282,8 @@ const formatScore = (score: number | null): string => {
 
 const getSentimentClass = (score: number | null): string => {
   if (score === null) return 'neutral';
-  if (score > 0.3) return 'positive';
-  if (score < -0.3) return 'negative';
+  if (score > 0.6) return 'positive';
+  if (score < 0.4) return 'negative';
   return 'neutral';
 };
 </script>

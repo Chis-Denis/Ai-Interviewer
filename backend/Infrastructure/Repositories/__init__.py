@@ -1,7 +1,7 @@
-from Infrastructure.Repositories.InterviewRepository import SqlInterviewRepository
-from Infrastructure.Repositories.QuestionRepository import SqlQuestionRepository
-from Infrastructure.Repositories.AnswerRepository import SqlAnswerRepository
-from Infrastructure.Repositories.InterviewSummaryRepository import SqlInterviewSummaryRepository
+from infrastructure.repositories.interview_repository import SqlInterviewRepository
+from infrastructure.repositories.question_repository import SqlQuestionRepository
+from infrastructure.repositories.answer_repository import SqlAnswerRepository
+from infrastructure.repositories.interview_summary_repository import SqlInterviewSummaryRepository
 
 __all__ = [
     "SqlInterviewRepository",

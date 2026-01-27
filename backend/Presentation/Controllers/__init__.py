@@ -1,7 +1,7 @@
-from Presentation.Controllers.interview_controller import router as interview_router
-from Presentation.Controllers.question_controller import router as question_router
-from Presentation.Controllers.answer_controller import router as answer_router
-from Presentation.Controllers.summary_controller import router as summary_router
+from presentation.controllers.interview_controller import router as interview_router
+from presentation.controllers.question_controller import router as question_router
+from presentation.controllers.answer_controller import router as answer_router
+from presentation.controllers.summary_controller import router as summary_router
 
 __all__ = [
     "interview_router",

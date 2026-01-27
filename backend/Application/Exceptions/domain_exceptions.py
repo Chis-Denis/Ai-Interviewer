@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from Application.Exceptions.base_exceptions import NotFoundException, BusinessRuleException
+from application.exceptions.base_exceptions import NotFoundException, BusinessRuleException
 
 
 class InterviewNotFoundException(NotFoundException):
@@ -68,13 +68,4 @@ class MaxQuestionsReachedException(BusinessRuleException):
 
 class InvalidAnswerOrderException(BusinessRuleException):
     def __init__(self, message: str = "Answer order is invalid"):
-        super().__init__(message)
-
-
-class InterviewNotInProgressException(BusinessRuleException):
-    def __init__(self, interview_id: UUID = None, current_status: str = None):
-        if interview_id and current_status:
-            message = f"Interview {interview_id} is not in progress (current status: {current_status})"
-        else:
-            message = "Interview is not in progress"
         super().__init__(message)

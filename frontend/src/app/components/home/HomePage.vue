@@ -285,11 +285,6 @@ onMounted(() => {
   color: #065f46;
 }
 
-.status-cancelled {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
 .interview-date {
   color: #6b7280;
   font-size: 0.875rem;

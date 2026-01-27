@@ -5,10 +5,10 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
-from Application.Exceptions import NotFoundException, BusinessRuleException, ValidationException, LlmServiceError
-from Infrastructure.Database.database import init_db
-from Presentation.Routers import register_routers
-from Presentation.common import (
+from application.exceptions import NotFoundException, BusinessRuleException, ValidationException, LlmServiceError
+from infrastructure.database.database import init_db
+from presentation.routers import register_routers
+from presentation.common import (
     setup_middleware,
     validation_exception_handler,
     not_found_exception_handler,

@@ -3,14 +3,14 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from typing import List, Dict, Any
 from sqlalchemy.exc import SQLAlchemyError
-from Application.Exceptions import (
+from application.exceptions import (
     NotFoundException,
     BusinessRuleException,
     ValidationException,
     LlmServiceError,
 )
 from .error_schemas import ValidationErrorDetail, ValidationErrorResponse
-from Core.config import settings
+from core.config import settings
 
 
 def format_validation_error(errors: List[Dict[str, Any]]) -> ValidationErrorResponse:
@@ -64,28 +64,20 @@ async def validation_exception_handler_app(request: Request, exc: ValidationExce
 
 
 async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
-    error_message = "An error occurred while processing your request. Please try again later."
-    if settings.DEBUG:
-        error_message = str(exc)
-    
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
             "error": "Database Error",
-            "message": error_message
+            "message": "An error occurred while processing your request. Please try again later."
         }
     )
 
 
 async def llm_service_exception_handler(request: Request, exc: LlmServiceError) -> JSONResponse:
-    error_message = "An error occurred while generating content. Please try again later."
-    if settings.DEBUG:
-        error_message = str(exc)
-    
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
             "error": "LLM Service Error",
-            "message": error_message
+            "message": "An error occurred while generating content. Please try again later."
         }
     )

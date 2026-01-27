@@ -3,26 +3,26 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from Application.UseCases import SubmitAnswerUseCase, GetAnswerUseCase
-from Application.DTOs import CreateAnswerDTO
-from Presentation.DTOs import AnswerResponseDTO
-from Composition import (
+from application.use_cases import SubmitAnswerUseCase, GetAnswerUseCase
+from application.dtos import CreateAnswerDTO
+from presentation.dtos import AnswerResponseDTO
+from composition import (
     get_submit_answer_use_case,
     get_answer_use_case,
 )
-from Presentation.Mappers import answer_to_response_dto
-from Presentation.common import ValidationErrorResponse
+from presentation.mappers import answer_to_response_dto
+from presentation.common import ValidationErrorResponse
 
 router = APIRouter(prefix="/answers", tags=["answers"])
 
 
 @router.post(
-    "/",
+    "",
     response_model=AnswerResponseDTO,
     status_code=status.HTTP_201_CREATED,
     responses={
         404: {"description": "Interview or question not found"},
-        400: {"description": "Business rule violation (interview completed, cancelled, invalid answer order, or duplicate answer)"},
+        400: {"description": "Business rule violation (interview completed, invalid answer order, or duplicate answer)"},
         422: {"model": ValidationErrorResponse, "description": "Validation Error"},
     }
 )

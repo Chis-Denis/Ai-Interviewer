@@ -1,14 +1,13 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from Application.RepositoryInterfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
-from Application.Services.LLMOrchestrator import LLMOrchestrator
-from Application.Services.LLMClient import LLMClient
-from Application.UseCases import (
+from application.repository_interfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
+from application.services.llm_orchestrator import LLMOrchestrator
+from application.services.llm_client import LLMClient
+from application.use_cases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
     DeleteInterviewUseCase,
-    UpdateInterviewUseCase,
     GenerateQuestionUseCase,
     GetQuestionUseCase,
     SubmitAnswerUseCase,
@@ -16,10 +15,10 @@ from Application.UseCases import (
     GenerateSummaryUseCase,
     GetSummaryUseCase,
 )
-from Core.config import Settings, settings
-from Infrastructure.Database.database import get_db
-from Infrastructure.LLM import OpenAIClient
-from Infrastructure.Repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
+from core.config import Settings, settings
+from infrastructure.database.database import get_db
+from infrastructure.llm import OpenAIClient
+from infrastructure.repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
 
 
 async def get_interview_repository(db: AsyncSession = Depends(get_db)) -> InterviewRepository:
@@ -68,12 +67,6 @@ def get_delete_interview_use_case(
     repository: InterviewRepository = Depends(get_interview_repository)
 ) -> DeleteInterviewUseCase:
     return DeleteInterviewUseCase(repository)
-
-
-def get_update_interview_use_case(
-    repository: InterviewRepository = Depends(get_interview_repository)
-) -> UpdateInterviewUseCase:
-    return UpdateInterviewUseCase(repository)
 
 
 def get_generate_question_use_case(

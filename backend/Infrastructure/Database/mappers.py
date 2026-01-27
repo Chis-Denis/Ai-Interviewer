@@ -1,13 +1,13 @@
 from uuid import UUID
 from typing import Optional
-from Domain.Entities import Interview, Question, Answer, InterviewSummary
-from Infrastructure.Database.models import (
+from domain.entities import Interview, Question, Answer, InterviewSummary
+from infrastructure.database.models import (
     InterviewModel,
     QuestionModel,
     AnswerModel,
     InterviewSummaryModel,
 )
-from Domain.Enums import InterviewStatus
+from domain.enums import InterviewStatus
 
 
 def interview_model_to_entity(model: InterviewModel) -> Interview:
