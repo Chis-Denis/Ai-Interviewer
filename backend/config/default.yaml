@@ -9,3 +9,8 @@ interview:
 prompts:
   version: "v1"
   templates_path: ""
+
+cors:
+  origins:
+    - "http://localhost:5173"
+    - "http://localhost:3000"

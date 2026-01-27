@@ -25,7 +25,7 @@ class Settings(BaseSettings):
         extra="ignore"
     )
     
-    CORS_ORIGINS: List[str] = []
+    CORS_ORIGINS: List[str] = _yaml_config.get("cors", {}).get("origins", [])
     
     LLM_API_KEY: str = ""
     LLM_BASE_URL: str = _yaml_config.get("llm", {}).get("base_url", "https://api.openai.com/v1")

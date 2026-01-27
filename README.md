@@ -1,43 +1,64 @@
 # AI Interviewer
 
-An intelligent interview system that conducts AI-powered interviews, generates contextual questions, and provides comprehensive analysis of candidate responses.
+An AI-powered interview system that generates contextual questions and provides comprehensive candidate analysis.
 
-## What It Does
+![Home Page](docs/images/home.png)
 
-This system allows you to:
-- **Start interviews** on any topic (e.g., "Python optimization", "System design", "Machine Learning")
-- **Generate questions dynamically** - The AI creates 3-5 sequential questions that build on previous answers
-- **Collect answers** interactively with order validation
-- **Analyze responses** with sentiment analysis, key themes, strengths, weaknesses, and calculated metrics
-- **Store everything** - Complete interview transcripts and summaries are persisted
+## Features
+
+- **Dynamic Interviews** — Start on any topic; AI generates 3-5 sequential questions that adapt to responses
+- **Real-time Analysis** — Sentiment scoring, key themes, strengths/weaknesses identification
+- **Performance Metrics** — Clarity, confidence, consistency scores with detailed feedback
+- **Full Persistence** — All transcripts and summaries stored in SQLite
+
+![Interview Flow](docs/images/interview.png)
+
+![Summary Analysis](docs/images/summary.png)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Backend | FastAPI, SQLAlchemy, Pydantic |
+| Frontend | Vue.js 3, TypeScript, Vite |
+| AI | OpenAI API |
+| Database | SQLite |
 
 ## Quick Start
 
 ### Prerequisites
-- Python 3.9+ (for backend)
-- Node.js 18+ (for frontend)
 
-### Backend Setup
+- Python 3.9+
+- Node.js 18+
+- OpenAI API key
+
+### Backend
 
 ```bash
 cd backend
 python -m venv venv
-
-# Windows
-venv\Scripts\activate
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # macOS/Linux
 
 pip install -r requirements.txt
-
-# Create .env file
-echo "LLM_API_KEY=your-api-key-here" > .env
-
-# Run the server
-uvicorn main:app --reload
 ```
 
-The API will be available at `http://localhost:8000` with interactive docs at `/docs`.
+Create `.env` file:
 
-### Frontend Setup
+```env
+LLM_API_KEY=your-openai-api-key
+LLM_MODEL=gpt-4o-mini
+```
+
+Run:
+
+```bash
+python main.py   
+```
+
+API available at `http://localhost:8000` | Docs at `/docs`
+
+### Frontend
 
 ```bash
 cd frontend
@@ -45,28 +66,17 @@ npm install
 npm run dev
 ```
 
+App available at `http://localhost:5173`
+
 ## Project Structure
 
 ```
-├── backend/     # FastAPI backend (Clean Architecture)
-└── frontend/    # Vue.js 3 frontend
+├── backend/      # FastAPI
+├── frontend/     # Vue.js 3 + TypeScript
+└── docs/         # Screenshots
 ```
-
-## Tech Stack
-
-- **Backend**: FastAPI, SQLite, SQLAlchemy, Pydantic
-- **Frontend**: Vue.js 3, TypeScript, Vite
-- **AI**: OpenAI API (configurable for other LLM providers)
 
 ## Documentation
 
-- **Backend Details**: See `backend/README.md` for architecture, LLM interaction, and flow
-- **API Documentation**: Available at `http://localhost:8000/docs` when running
-
-## Features
-
-- **Dynamic Question Generation** - Questions adapt based on previous answers
-- **Comprehensive Analysis** - Sentiment, themes, strengths, weaknesses, and calculated metrics
-- **Order Validation** - Ensures answers are submitted in sequence
-- **Full Persistence** - All interviews and summaries are stored
-- **Clean Architecture** - Well-structured, maintainable codebase
+- [Backend Architecture](backend/README.md) — Clean Architecture, LLM integration, API flow
+- [Frontend Guide](frontend/README.md) — Components, services, state management
