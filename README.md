@@ -2,7 +2,7 @@
 
 An AI-powered interview system that generates contextual questions and provides comprehensive candidate analysis.
 
-![Home Page](docs/images/home.png)
+![Home Page](images/main_interview_screen.png)
 
 ## Features
 
@@ -11,9 +11,21 @@ An AI-powered interview system that generates contextual questions and provides 
 - **Performance Metrics** — Clarity, confidence, consistency scores with detailed feedback
 - **Full Persistence** — All transcripts and summaries stored in SQLite
 
-![Interview Flow](docs/images/interview.png)
+### Interview Flow
 
-![Summary Analysis](docs/images/summary.png)
+![Questions & Answers](images/questions_answers.png)
+
+### Summary & Analysis
+
+![Summary Scores](images/good_interview_summary.png)
+
+![Themes & Key Points](images/themes_key_points.png)
+
+![Strengths](images/strongs.png)
+
+![Areas for Improvement](images/improvement_missing.png)
+
+![Full Summary](images/full_summary.png)
 
 ## Tech Stack
 
@@ -71,9 +83,9 @@ App available at `http://localhost:5173`
 ## Project Structure
 
 ```
-├── backend/      # FastAPI
+├── backend/      # FastAPI (Clean Architecture)
 ├── frontend/     # Vue.js 3 + TypeScript
-└── docs/         # Screenshots
+└── images/       # Screenshots
 ```
 
 ## Documentation
