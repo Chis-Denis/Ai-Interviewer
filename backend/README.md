@@ -8,13 +8,11 @@ FastAPI backend for an AI-powered interview system, built with Clean Architectur
 
 1. [Architecture Overview](#architecture-overview)
 2. [Why Clean Architecture?](#why-clean-architecture)
-3. [Why Anemic Domain Model?](#why-anemic-domain-model)
-4. [Design Decisions](#design-decisions)
-5. [Request Flow Example](#request-flow-example)
-6. [Prompt Design & LLM Interaction](#prompt-design--llm-interaction)
-7. [Error Handling Strategy](#error-handling-strategy)
-8. [Project Structure](#project-structure)
-9. [Setup](#setup)
+3. [Design Decisions](#design-decisions)
+4. [Request Flow Example](#request-flow-example)
+5. [Prompt Design & LLM Interaction](#prompt-design--llm-interaction)
+6. [Error Handling Strategy](#error-handling-strategy)
+7. [Project Structure](#project-structure)
 
 ---
 
@@ -138,11 +136,13 @@ Honestly? A bit. For a quick prototype, a simple MVC structure would be fine. Bu
 
 ---
 
-## Why Anemic Domain Model?
+## Design Decisions
 
-### What That Means
+Here's how I thought through some key choices, comparing what I did against simpler alternatives.
 
-My entities — `Interview`, `Question`, `Answer` — are just data containers. They hold state but don't have behavior:
+### Anemic Domain Model vs Rich Domain Model
+
+**What I did:** My entities — `Interview`, `Question`, `Answer` — are just data containers. They hold state but don't have behavior:
 
 ```python
 class Interview:
@@ -153,7 +153,7 @@ class Interview:
         # No methods like interview.complete() or interview.add_question()
 ```
 
-The alternative would be a "rich" domain model where entities have methods that encapsulate business logic:
+**The alternative:** A "rich" domain model where entities have methods that encapsulate business logic:
 
 ```python
 # Rich domain approach (not what I did)
@@ -163,11 +163,9 @@ class Interview:
         ...
 ```
 
-### Why I Went Anemic
-
 The rich domain model works great when you have complex business rules — think banking software where an `Account` needs to enforce overdraft limits, transaction histories, and interest calculations.
 
-But my app is different:
+But my app is different. It's mostly "call an external API, save the result, return it." The interesting logic is the LLM orchestration, not the entities themselves. Putting `generate_question()` inside an `Interview` entity would feel forced — it's not really "interview behavior," it's "application workflow."
 
 | Factor | Rich Domain | Anemic + Use Cases |
 |--------|-------------|-------------------|
@@ -175,14 +173,6 @@ But my app is different:
 | **LLM integration** | Awkward — entities calling async services? | Natural — use case orchestrates everything |
 | **Testing** | Harder — need to mock inside entities | Easier — use cases are standalone |
 | **Complexity** | Higher setup | Lower ceremony |
-
-My app is mostly "call an external API, save the result, return it." The interesting logic is the LLM orchestration, not the entities themselves. Putting `generate_question()` inside an `Interview` entity would feel forced — it's not really "interview behavior," it's "application workflow."
-
----
-
-## Design Decisions
-
-Here's how I thought through some key choices, comparing what I did against simpler alternatives.
 
 ### Use Cases vs Fat Services
 
