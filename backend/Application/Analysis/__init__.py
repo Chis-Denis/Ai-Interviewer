@@ -1,6 +1,6 @@
-from Application.Analysis.AnswerEvaluator import AnswerEvaluator
-from Application.Analysis.AnswerMetrics import AnswerMetrics
-from Application.Analysis.scoring import ScoringCalculator
+from application.analysis.answer_evaluator import AnswerEvaluator
+from application.analysis.answer_metrics import AnswerMetrics
+from application.analysis.scoring import ScoringCalculator
 
 __all__ = [
     "AnswerEvaluator",

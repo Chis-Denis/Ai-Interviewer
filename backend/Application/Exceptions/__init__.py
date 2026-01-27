@@ -1,11 +1,11 @@
-from Application.Exceptions.base_exceptions import (
+from application.exceptions.base_exceptions import (
     ApplicationException,
     NotFoundException,
     BusinessRuleException,
     ValidationException,
     LlmServiceError,
 )
-from Application.Exceptions.domain_exceptions import (
+from application.exceptions.domain_exceptions import (
     InterviewNotFoundException,
     QuestionNotFoundException,
     AnswerNotFoundException,
@@ -14,7 +14,6 @@ from Application.Exceptions.domain_exceptions import (
     InterviewAlreadyCompletedException,
     MaxQuestionsReachedException,
     InvalidAnswerOrderException,
-    InterviewNotInProgressException,
 )
 
 __all__ = [
@@ -31,5 +30,4 @@ __all__ = [
     "InterviewAlreadyCompletedException",
     "MaxQuestionsReachedException",
     "InvalidAnswerOrderException",
-    "InterviewNotInProgressException",
 ]

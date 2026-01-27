@@ -142,6 +142,4 @@ class ScoringConstants:
         SENTENCE_ENDINGS = ['.', '!', '?']
         PERIOD_REPLACEMENT = '.'
         SPACE_CHAR = ' '
-    
-    class Rounding:
-        SCORE_DECIMAL_PLACES = 2
+

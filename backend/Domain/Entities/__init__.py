@@ -1,7 +1,7 @@
-from Domain.Entities.Interview import Interview
-from Domain.Entities.Question import Question
-from Domain.Entities.Answer import Answer
-from Domain.Entities.InterviewSummary import InterviewSummary
+from domain.entities.interview import Interview
+from domain.entities.question import Question
+from domain.entities.answer import Answer
+from domain.entities.interview_summary import InterviewSummary
 
 __all__ = [
     "Interview",

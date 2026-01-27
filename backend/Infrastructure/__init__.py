@@ -1,4 +1,4 @@
-from Infrastructure.Repositories import (
+from infrastructure.repositories import (
     SqlInterviewRepository,
     SqlQuestionRepository,
     SqlAnswerRepository,

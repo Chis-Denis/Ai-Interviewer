@@ -1,6 +1,20 @@
-from pydantic_settings import BaseSettings
+from pathlib import Path
+from typing import Any, Dict, List
+
+import yaml
 from pydantic import ConfigDict
-from typing import List
+from pydantic_settings import BaseSettings
+
+
+def load_yaml_config() -> Dict[str, Any]:
+    config_path = Path(__file__).parent.parent / "config" / "default.yaml"
+    if config_path.exists():
+        with open(config_path, "r") as f:
+            return yaml.safe_load(f) or {}
+    return {}
+
+
+_yaml_config = load_yaml_config()
 
 
 class Settings(BaseSettings):
@@ -11,30 +25,17 @@ class Settings(BaseSettings):
         extra="ignore"
     )
     
-    APP_NAME: str = "AI Interviewer"
-    APP_VERSION: str = "1.0.0"
-    ENVIRONMENT: str = "development"
-    HOST: str = "0.0.0.0"
-    PORT: int = 8000
-    API_V1_PREFIX: str = "/api/v1"
-    
-    DATABASE_URL: str = ""
-    DATABASE_ECHO: bool = False
-    
     CORS_ORIGINS: List[str] = []
     
     LLM_API_KEY: str = ""
-    LLM_PROVIDER: str = "openai"
-    LLM_BASE_URL: str = "https://api.openai.com/v1"
-    LLM_SYSTEM_PROMPT: str = "You are a helpful assistant."
+    LLM_BASE_URL: str = _yaml_config.get("llm", {}).get("base_url", "https://api.openai.com/v1")
     LLM_MODEL: str = ""
-    LLM_TEMPERATURE: float = 0.7
-    LLM_MAX_TOKENS: int = 2000
+    LLM_TEMPERATURE: float = _yaml_config.get("llm", {}).get("temperature", 0.7)
+    LLM_MAX_TOKENS: int = _yaml_config.get("llm", {}).get("max_tokens", 2000)
     
-    DEBUG: bool = False
-    MAX_QUESTIONS_PER_INTERVIEW: int = 5
-    PROMPT_VERSION: str = "v1"
-    PROMPT_TEMPLATES_PATH: str = ""
+    MAX_QUESTIONS_PER_INTERVIEW: int = _yaml_config.get("interview", {}).get("max_questions", 5)
+    PROMPT_VERSION: str = _yaml_config.get("prompts", {}).get("version", "v1")
+    PROMPT_TEMPLATES_PATH: str = _yaml_config.get("prompts", {}).get("templates_path", "")
 
 
 settings = Settings()

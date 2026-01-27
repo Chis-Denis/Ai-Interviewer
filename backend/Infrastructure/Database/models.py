@@ -2,8 +2,8 @@ from sqlalchemy import Column, String, Integer, Float, DateTime, ForeignKey, Tex
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 import uuid
-from Infrastructure.Database.database import Base
-from Domain.Enums import InterviewStatus
+from infrastructure.database.database import Base
+from domain.enums import InterviewStatus
 
 
 def generate_uuid():

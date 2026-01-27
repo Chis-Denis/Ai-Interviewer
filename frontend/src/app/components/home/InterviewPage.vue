@@ -212,6 +212,7 @@ const loadSummary = async (): Promise<void> => {
   try {
     summary.value = await summaryService.getByInterviewId(interviewId);
   } catch {
+    // Summary may not exist yet - this is expected
   }
 };
 
@@ -325,11 +326,6 @@ onMounted(() => {
 .status-completed {
   background: #d1fae5;
   color: #065f46;
-}
-
-.status-cancelled {
-  background: #fee2e2;
-  color: #991b1b;
 }
 
 .interview-content {

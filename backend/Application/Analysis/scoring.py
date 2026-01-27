@@ -1,8 +1,8 @@
 from typing import List
-from Application.Services.llm_data import AnswerData
-from Application.Analysis.AnswerMetrics import AnswerMetrics
-from Application.Analysis.AnswerEvaluator import AnswerEvaluator
-from Application.Analysis.scoring_constants import ScoringConstants
+from application.services.llm_data import AnswerData
+from application.analysis.answer_metrics import AnswerMetrics
+from application.analysis.answer_evaluator import AnswerEvaluator
+from application.analysis.scoring_constants import ScoringConstants
 
 
 class ScoringCalculator:

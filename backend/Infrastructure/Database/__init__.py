@@ -1,11 +1,11 @@
-from Infrastructure.Database.database import Base, get_db, init_db
-from Infrastructure.Database.models import (
+from infrastructure.database.database import Base, get_db, init_db
+from infrastructure.database.models import (
     InterviewModel,
     QuestionModel,
     AnswerModel,
     InterviewSummaryModel,
 )
-from Infrastructure.Database.mappers import (
+from infrastructure.database.mappers import (
     interview_model_to_entity,
     interview_entity_to_model,
     question_model_to_entity,
