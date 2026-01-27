@@ -4,6 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from application.repository_interfaces import InterviewRepository, QuestionRepository, AnswerRepository, InterviewSummaryRepository
 from application.services.llm_orchestrator import LLMOrchestrator
 from application.services.llm_client import LLMClient
+from application.services.prompt_loader import PromptLoader
+from application.services.prompt_builder import PromptBuilder
 from application.use_cases import (
     CreateInterviewUseCase,
     GetInterviewUseCase,
@@ -15,7 +17,7 @@ from application.use_cases import (
     GenerateSummaryUseCase,
     GetSummaryUseCase,
 )
-from core.config import Settings, settings
+from config.config import Settings, settings
 from infrastructure.database.database import get_db
 from infrastructure.llm import OpenAIClient
 from infrastructure.repositories import SqlInterviewRepository, SqlQuestionRepository, SqlAnswerRepository, SqlInterviewSummaryRepository
@@ -45,10 +47,20 @@ def get_llm_client(settings: Settings = Depends(get_settings)) -> LLMClient:
     return OpenAIClient(settings)
 
 
+def get_prompt_loader(settings: Settings = Depends(get_settings)) -> PromptLoader:
+    prompts_path = settings.PROMPT_TEMPLATES_PATH if settings.PROMPT_TEMPLATES_PATH else None
+    return PromptLoader(prompts_path=prompts_path, version=settings.PROMPT_VERSION)
+
+
+def get_prompt_builder(prompt_loader: PromptLoader = Depends(get_prompt_loader)) -> PromptBuilder:
+    return PromptBuilder(prompt_loader)
+
+
 def get_llm_orchestrator(
-    llm_client: LLMClient = Depends(get_llm_client)
+    llm_client: LLMClient = Depends(get_llm_client),
+    prompt_builder: PromptBuilder = Depends(get_prompt_builder),
 ) -> LLMOrchestrator:
-    return LLMOrchestrator(llm_client)
+    return LLMOrchestrator(llm_client, prompt_builder)
 
 
 def get_create_interview_use_case(

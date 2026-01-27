@@ -1,14 +1,12 @@
 from typing import List, Optional
 from application.services.llm_data import QuestionData, AnswerData
 from application.services.prompt_loader import PromptLoader
-from core.config import settings
 
 
 class PromptBuilder:
     
-    def __init__(self, prompt_loader: Optional[PromptLoader] = None):
-        prompts_path = settings.PROMPT_TEMPLATES_PATH if settings.PROMPT_TEMPLATES_PATH else None
-        self.prompt_loader = prompt_loader or PromptLoader(prompts_path=prompts_path, version=settings.PROMPT_VERSION)
+    def __init__(self, prompt_loader: PromptLoader):
+        self.prompt_loader = prompt_loader
     
     @staticmethod
     def build_question_context(
