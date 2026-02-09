@@ -61,7 +61,6 @@ class GenerateQuestionUseCase:
         
         question_text = await self.llm_orchestrator.generate_question(
             topic=interview.topic,
-            interview_id=dto.interview_id,
             existing_questions=question_data_list,
             previous_answers=answer_data_list,
         )

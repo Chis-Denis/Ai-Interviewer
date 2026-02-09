@@ -10,7 +10,6 @@ from application.exceptions import (
     LlmServiceError,
 )
 from .error_schemas import ValidationErrorDetail, ValidationErrorResponse
-from config.config import settings
 
 
 def format_validation_error(errors: List[Dict[str, Any]]) -> ValidationErrorResponse:

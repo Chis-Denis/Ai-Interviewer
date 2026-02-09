@@ -1,5 +1,4 @@
 from uuid import UUID
-from typing import Optional
 from domain.entities import Interview, Question, Answer, InterviewSummary
 from infrastructure.database.models import (
     InterviewModel,

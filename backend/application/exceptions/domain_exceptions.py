@@ -21,15 +21,6 @@ class QuestionNotFoundException(NotFoundException):
         super().__init__(message)
 
 
-class AnswerNotFoundException(NotFoundException):
-    def __init__(self, answer_id: UUID = None):
-        if answer_id:
-            message = f"Answer with id {answer_id} not found"
-        else:
-            message = "Answer not found"
-        super().__init__(message)
-
-
 class SummaryNotFoundException(NotFoundException):
     def __init__(self, interview_id: UUID = None):
         if interview_id:

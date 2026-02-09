@@ -8,7 +8,6 @@ from application.exceptions.base_exceptions import (
 from application.exceptions.domain_exceptions import (
     InterviewNotFoundException,
     QuestionNotFoundException,
-    AnswerNotFoundException,
     SummaryNotFoundException,
     NoAnswersFoundException,
     InterviewAlreadyCompletedException,
@@ -24,7 +23,6 @@ __all__ = [
     "LlmServiceError",
     "InterviewNotFoundException",
     "QuestionNotFoundException",
-    "AnswerNotFoundException",
     "SummaryNotFoundException",
     "NoAnswersFoundException",
     "InterviewAlreadyCompletedException",

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import List
 from uuid import UUID
 from domain.entities import Answer
 
@@ -8,10 +8,6 @@ class AnswerRepository(ABC):
     
     @abstractmethod
     async def create(self, answer: Answer) -> Answer:
-        pass
-    
-    @abstractmethod
-    async def get_by_id(self, answer_id: UUID) -> Optional[Answer]:
         pass
     
     @abstractmethod

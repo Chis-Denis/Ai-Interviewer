@@ -1,5 +1,4 @@
 from typing import List, Optional, Dict, Any
-from uuid import UUID
 
 from application.services.llm_client import LLMClient
 from application.services.prompt_builder import PromptBuilder
@@ -23,7 +22,6 @@ class LLMOrchestrator:
     async def generate_question(
         self,
         topic: str,
-        interview_id: UUID,
         existing_questions: Optional[List[QuestionData]] = None,
         previous_answers: Optional[List[AnswerData]] = None,
     ) -> str:

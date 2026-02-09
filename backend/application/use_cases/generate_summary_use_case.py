@@ -14,7 +14,7 @@ from application.repository_interfaces import (
 from application.services.llm_orchestrator import LLMOrchestrator
 from application.services.llm_data import QuestionData, AnswerData
 from application.dtos import LlmSummaryResponseDTO
-from application.exceptions import InterviewNotFoundException, NoAnswersFoundException, SummaryNotFoundException, ValidationException
+from application.exceptions import InterviewNotFoundException, NoAnswersFoundException, ValidationException
 from application.analysis.answer_evaluator import AnswerEvaluator
 from application.analysis.scoring import ScoringCalculator
 
@@ -86,17 +86,10 @@ class GenerateSummaryUseCase:
             full_summary_text=llm_summary.full_summary_text,
         )
         
-        existing_summary = await self.summary_repository.get_by_interview_id(interview_id)
-        if existing_summary:
-            summary.summary_id = existing_summary.summary_id
-            updated_summary = await self.summary_repository.update(summary)
-            if not updated_summary:
-                raise SummaryNotFoundException(interview_id)
-        else:
-            updated_summary = await self.summary_repository.create(summary)
+        created_summary = await self.summary_repository.create(summary)
         
         if interview.status != InterviewStatus.COMPLETED:
             interview.complete()
             await self.interview_repository.update(interview)
         
-        return updated_summary
+        return created_summary

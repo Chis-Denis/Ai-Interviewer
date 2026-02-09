@@ -3,7 +3,6 @@ class ScoringConstants:
     MIN_ANSWERS_FOR_CONSISTENCY = 2
     SCORE_PRECISION = 2
     MAX_SCORE = 1.0
-    MIN_SCORE = 0.0
     
     ZERO_SCORE = 0.0
     BAD_ANSWER_THRESHOLD_RATIO = 0.5

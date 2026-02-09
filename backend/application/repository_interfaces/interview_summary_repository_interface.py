@@ -13,7 +13,4 @@ class InterviewSummaryRepository(ABC):
     @abstractmethod
     async def get_by_interview_id(self, interview_id: UUID) -> Optional[InterviewSummary]:
         pass
-    
-    @abstractmethod
-    async def update(self, summary: InterviewSummary) -> Optional[InterviewSummary]:
-        pass
+

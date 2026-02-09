@@ -79,6 +79,4 @@ class OpenAIClient(LLMClient):
         response.raise_for_status()
         data = response.json()
         return data["choices"][0]["message"]["content"]
-    
-    async def close(self):
-        await self.client.aclose()
+

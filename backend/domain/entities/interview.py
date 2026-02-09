@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import Optional
 from uuid import UUID, uuid4
 from domain.enums import InterviewStatus
 

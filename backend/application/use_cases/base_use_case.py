@@ -25,7 +25,7 @@ class BaseGetByIdUseCase(BaseUseCase[T, R], ABC):
         return entity
 
 
-class BaseGetWithInterviewIdUseCase(BaseGetByIdUseCase[T, R], ABC):
+class BaseGetByInterviewIdUseCase(BaseUseCase[T, R], ABC):
     
     async def execute_by_interview_id(self, interview_id: UUID) -> List[T]:
         return await self.repository.get_by_interview_id(interview_id)

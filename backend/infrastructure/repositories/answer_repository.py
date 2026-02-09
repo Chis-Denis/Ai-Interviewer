@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,15 +29,6 @@ class SqlAnswerRepository(AnswerRepository):
         except SQLAlchemyError:
             await self.db.rollback()
             raise
-    
-    async def get_by_id(self, answer_id: UUID) -> Optional[Answer]:
-        result = await self.db.execute(
-            select(AnswerModel).filter(AnswerModel.answer_id == str(answer_id))
-        )
-        model = result.scalar_one_or_none()
-        if not model:
-            return None
-        return answer_model_to_entity(model)
     
     async def get_by_interview_id(self, interview_id: UUID) -> List[Answer]:
         result = await self.db.execute(
